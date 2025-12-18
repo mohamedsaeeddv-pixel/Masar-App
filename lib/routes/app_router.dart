@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:masar_app/features/login/presentation/views/screens/login_screen.dart';
-import 'package:masar_app/features/spalsh/presentation/views/screens/spalsh_screen.dart';
+import 'package:masar_app/features/home/presentation/views/screens/home_screen.dart';
+import 'package:masar_app/features/home/presentation/views/screens/map_screen.dart';
 
 
 // Home
-import 'package:masar_app/features/home/presentation/views/screens/home_screen.dart';
-import 'package:masar_app/features/home/presentation/views/screens/map_screen.dart';
 import 'package:masar_app/features/home/presentation/views/screens/work_details_screen.dart';
 
 // Profile
@@ -22,6 +21,7 @@ import 'package:masar_app/features/more/presentation/views/screens/settings_scre
 import 'package:masar_app/features/more/presentation/views/screens/add_client_screen.dart';
 import 'package:masar_app/features/more/presentation/views/screens/app_info_screen.dart';
 
+import '../features/spalsh/presentation/views/screens/splash_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
