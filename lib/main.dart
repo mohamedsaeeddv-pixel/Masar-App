@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Directionality(
           textDirection: TextDirection.rtl,
-          child: SettingsScreen()
+          child: ProfileScreen()
       ),
       // routerConfig: AppRouter.router,
       theme: ThemeData(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_styles.dart';
 import '../../../../../core/constants/assets.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,22 +27,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            SizedBox(height: height * 0.06),
 
-            // 🔷 Logo
             Image.asset(
               AssetsData.logo,
-              height: 130,
+              height: height * 0.16,
             ),
 
-            const SizedBox(height: 30),
+            SizedBox(height: height * 0.03),
 
-            // ⬜ Container يأخذ باقي الصفحة
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -59,22 +60,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        SizedBox(height: height * 0.025),
 
-                        const Text(
+                        Text(
                           'مرحباً بك',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.headline30Regular,
                         ),
+
                         const SizedBox(height: 8),
 
                         const Text(
                           'تسجيل الدخول إلى حسابك',
-                          style: TextStyle(color: Colors.grey),
+                          style: AppTextStyles.body16Regular,
                         ),
-                        const SizedBox(height: 20),
+
+                        SizedBox(height: height * 0.03),
 
                         const Text('اسم المستخدم'),
                         const SizedBox(height: 10),
@@ -112,30 +112,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: height * 0.03),
 
-                        const Align(
+                        /// 🔹 Forgot Password (Clickable فقط)
+                        Align(
                           alignment: Alignment.centerRight,
-                          child: Text(
-                            'نسيت كلمة المرور؟',
-                            style: TextStyle(color: Colors.blue),
+                          child: GestureDetector(
+                            onTap: () {
+                            },
+                            child: const Text(
+                              'نسيت كلمة المرور؟',
+                              style: TextStyle(color: AppColors.blueRing),
+                            ),
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        SizedBox(height: height * 0.03),
 
                         CustomButton(
                           text: 'تسجيل الدخول',
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // ✅ كل البيانات صح
                               print('Username: ${_usernameController.text}');
                               print('Password: ${_passwordController.text}');
                             }
                           },
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: height * 0.02),
                       ],
                     ),
                   ),

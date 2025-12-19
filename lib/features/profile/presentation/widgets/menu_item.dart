@@ -5,6 +5,7 @@ class MenuItem extends StatelessWidget {
   final IconData icon;
   final Color iconBg;
   final Color iconColor;
+  final VoidCallback? onTap;
 
   const MenuItem({
     super.key,
@@ -12,39 +13,48 @@ class MenuItem extends StatelessWidget {
     required this.icon,
     required this.iconBg,
     required this.iconColor,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          // 🔹 الأيقونة زي ما هي
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: iconColor),
-          ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
 
-          const Spacer(),
-
-          // 🔹 النص جنب السهم
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconBg,
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(width: 20),
-              const Icon(Icons.arrow_forward_ios_outlined, size: 14),
-            ],
-          ),
-        ],
+              child: Icon(icon, color: iconColor),
+            ),
+
+            const Spacer(),
+
+
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(width: 20),
+                const Icon(
+                  Icons.arrow_forward_ios_outlined,
+                  size: 14,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+

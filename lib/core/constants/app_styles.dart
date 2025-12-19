@@ -65,6 +65,7 @@ class AppTextStyles {
   static const TextStyle title20Bold = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,
+    color: Colors.white
   );
 
   // ========= Font Size 30 =========
