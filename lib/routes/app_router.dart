@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:masar_app/features/login/presentation/views/screens/login_screen.dart';
+import 'package:masar_app/features/spalsh/presentation/views/screens/splash_screen.dart';
 
 
 // Home
@@ -21,12 +22,11 @@ import 'package:masar_app/features/more/presentation/views/screens/settings_scre
 import 'package:masar_app/features/more/presentation/views/screens/add_client_screen.dart';
 import 'package:masar_app/features/more/presentation/views/screens/app_info_screen.dart';
 
-import '../features/spalsh/presentation/views/screens/splash_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/more/add-client',
+    initialLocation: '/',
     debugLogDiagnostics: true,
 
     routes: [
@@ -51,6 +51,8 @@ class AppRouter {
         name: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
         routes: [
+
+         
 
           GoRoute(
             path: 'map',
