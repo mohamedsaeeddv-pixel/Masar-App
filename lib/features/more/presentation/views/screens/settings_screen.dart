@@ -1,132 +1,169 @@
 import 'package:flutter/material.dart';
-import '../../widgets/info_row.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_styles.dart';
 import '../../widgets/option_button.dart';
 import '../../widgets/section_card.dart';
 
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  int selectedFontSize = 1;
+  int selectedTheme = 0;
+  int selectedLanguage = 0;
+
+  @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F8),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0D47A1),
-        title: const Text('الإعدادات'),
+        backgroundColor: AppColors.bluePrimaryDark,
+        title: Text(
+          'الإعدادات',
+          style: AppTextStyles.title20Bold,
+        ),
         centerTitle: true,
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(width * 0.04),
         child: Column(
           children: [
-            /// 🔹 Font Size
             SectionCard(
               title: 'حجم الخط',
               icon: Icons.text_fields,
               child: Row(
-                children: const [
-                  Expanded(child: OptionButton(label: 'كبير', sub: 'Aa')),
-                  SizedBox(width: 8),
+                children: [
+                  Expanded(
+                    child: OptionButton(
+                      label: 'صغير',
+                      sub: 'Aa',
+                      selected: selectedFontSize == 0,
+                      onTap: () {
+                        setState(() => selectedFontSize = 0);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: OptionButton(
                       label: 'متوسط',
                       sub: 'Aa',
-                      selected: true,
+                      selected: selectedFontSize == 1,
+                      onTap: () {
+                        setState(() => selectedFontSize = 1);
+                      },
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Expanded(child: OptionButton(label: 'صغير', sub: 'Aa')),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OptionButton(
+                      label: 'كبير',
+                      sub: 'Aa',
+                      selected: selectedFontSize == 2,
+                      onTap: () {
+                        setState(() => selectedFontSize = 2);
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: height * 0.02),
 
-            /// 🔹 Theme
+
             SectionCard(
               title: 'المظهر',
               icon: Icons.brightness_6_outlined,
               child: Row(
-                children: const [
-                  Expanded(
-                    child: OptionButton(
-                      label: 'داكن',
-                      icon: Icons.nightlight_round,
-                    ),
-                  ),
-                  SizedBox(width: 8),
+                children: [
                   Expanded(
                     child: OptionButton(
                       label: 'فاتح',
                       icon: Icons.wb_sunny_outlined,
-                      selected: true,
+                      selected: selectedTheme == 0,
+                      onTap: () {
+                        setState(() => selectedTheme = 0);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OptionButton(
+                      label: 'داكن',
+                      icon: Icons.nightlight_round,
+                      selected: selectedTheme == 1,
+                      onTap: () {
+                        setState(() => selectedTheme = 1);
+                      },
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: height * 0.02),
 
-            /// 🔹 Language
+
             SectionCard(
               title: 'اللغة',
               icon: Icons.language,
               child: Row(
-                children: const [
-                  Expanded(child: OptionButton(label: 'English', flag: '🇬🇧')),
-                  SizedBox(width: 8),
+                children: [
                   Expanded(
                     child: OptionButton(
                       label: 'العربية',
                       flag: '🇪🇬',
-                      selected: true,
+                      selected: selectedLanguage == 0,
+                      onTap: () {
+                        setState(() => selectedLanguage = 0);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OptionButton(
+                      label: 'English',
+                      flag: '🇬🇧',
+                      selected: selectedLanguage == 1,
+                      onTap: () {
+                        setState(() => selectedLanguage = 1);
+                      },
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: height * 0.03),
 
-            /// 🔹 About App
-            SectionCard(
-              title: 'معلومات عن التطبيق',
-              icon: Icons.info_outline,
-              child: Column(
-                children:  [
-                  InfoRow(title: 'اسم التطبيق', value: 'مسار'),
-                  InfoRow(title: 'الإصدار', value: '1.0.0'),
-                  InfoRow(title: 'تاريخ الإصدار', value: '2024-01-15'),
-                  InfoRow(
-                    title: 'الوصف',
-                    value:
-                    'تطبيق مسار لإدارة وتتبع مهام التوصيل والمندوبين بكفاءة عالية',
-                  ),
-                  SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'support@masar.com',
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 20),
-
-            /// 🔹 Footer
             Column(
               children: const [
-                Text('Masar Team', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  'تم التطوير بواسطة',
+                  style: TextStyle(
+                      color:AppColors.textMutedGray,
+                      fontSize: 12),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Masar Team',
+                  style:AppTextStyles.body14Regular,
+                ),
                 SizedBox(height: 4),
                 Text(
                   '© 2024 جميع الحقوق محفوظة',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  style: TextStyle(color: AppColors.textMutedGray, fontSize: 12),
                 ),
               ],
             ),
@@ -136,3 +173,4 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+

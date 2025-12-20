@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_styles.dart';
+
 class SectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -25,11 +28,11 @@ class SectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18),
+              Icon(icon, size: 18,color: AppColors.chartBlue,),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: AppTextStyles.subtitle18Bold,
               ),
             ],
           ),
