@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:masar_app/routes/app_router.dart';
-
 // استيراد مكتبات Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -28,6 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return MaterialApp.router(
       routerConfig: AppRouter.router,
 
@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('ar', 'EG'),
       ],
+
 
       theme: ThemeData(
         fontFamily: 'Arial',
