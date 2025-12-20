@@ -21,7 +21,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
   String? _selectedClassification;
   String? _selectedType;
 
-  final List<String> _classifications = ['تصنيف A', 'تصنيف B', 'تصنيف C'];
+  final List<String> _classifications = ['A', 'B', 'C'];
   final List<String> _clientTypes = ['عميل جديد', 'عميل دائم', 'عميل محتمل'];
 
   Future<void> _saveClient() async {
