@@ -136,8 +136,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: 'تسجيل الدخول',
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              print('Username: ${_usernameController.text}');
-                              print('Password: ${_passwordController.text}');
                                       GoRouter.of(context).goNamed(AppRoutes.home);
 
                             }
