@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:masar_app/features/login/presentation/views/screens/login_screen.dart';
-import 'package:masar_app/features/spalsh/presentation/views/screens/splash_screen.dart';
+import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
+import 'package:masar_app/features/spalsh/presentation/screens/splash_screen.dart';
 
 
 // Home
-import 'package:masar_app/features/home/presentation/views/screens/home_screen.dart';
-import 'package:masar_app/features/home/presentation/views/screens/map_screen.dart';
-import 'package:masar_app/features/home/presentation/views/screens/work_details_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/map_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/work_details_screen.dart';
 
 // Profile
-import 'package:masar_app/features/profile/presentation/views/screens/profile_screen.dart';
-import 'package:masar_app/features/profile/presentation/views/screens/reports_screen.dart';
-import 'package:masar_app/features/profile/presentation/views/screens/my_data_screen.dart';
-import 'package:masar_app/features/profile/presentation/views/screens/deals_screen.dart';
+import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
+import 'package:masar_app/features/profile/presentation/screens/reports_screen.dart';
+import 'package:masar_app/features/profile/presentation/screens/my_data_screen.dart';
+import 'package:masar_app/features/profile/presentation/screens/deals_screen.dart';
 
 // More
-import 'package:masar_app/features/more/presentation/views/screens/more_screen.dart';
-import 'package:masar_app/features/more/presentation/views/screens/settings_screen.dart';
-import 'package:masar_app/features/more/presentation/views/screens/add_client_screen.dart';
-import 'package:masar_app/features/more/presentation/views/screens/app_info_screen.dart';
+import 'package:masar_app/features/more/presentation/screens/more_screen.dart';
+import 'package:masar_app/features/more/presentation/screens/settings_screen.dart';
+import 'package:masar_app/features/more/presentation/screens/add_client_screen.dart';
+import 'package:masar_app/features/more/presentation/screens/app_info_screen.dart';
 
 import 'app_routes.dart';
 
