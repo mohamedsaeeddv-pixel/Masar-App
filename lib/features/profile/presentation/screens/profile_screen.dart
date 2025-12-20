@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:masar_app/features/profile/presentation/widgets/info_tile.dart';
+import 'package:masar_app/features/profile/presentation/widgets/menu_item.dart';
+import 'package:masar_app/features/profile/presentation/widgets/profile_header.dart';
+import 'package:masar_app/features/profile/presentation/widgets/stats_card.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_styles.dart';
-import '../../widgets/info_tile.dart';
-import '../../widgets/menu_item.dart';
-import '../../widgets/profile_header.dart';
-import '../../widgets/stats_card.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

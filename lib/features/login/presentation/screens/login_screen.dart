@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:masar_app/routes/app_router.dart';
+import 'package:masar_app/routes/app_routes.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_styles.dart';
 import '../../../../../core/constants/assets.dart';
@@ -135,6 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (_formKey.currentState!.validate()) {
                               print('Username: ${_usernameController.text}');
                               print('Password: ${_passwordController.text}');
+                                      GoRouter.of(context).goNamed(AppRoutes.home);
+
                             }
                           },
                         ),

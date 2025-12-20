@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
-import 'package:masar_app/features/spalsh/presentation/screens/splash_screen.dart';
+import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
 
 
 // Home

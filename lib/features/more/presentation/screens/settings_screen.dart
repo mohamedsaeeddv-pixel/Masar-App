@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../widgets/info_row.dart';
-import '../../widgets/option_button.dart';
-import '../../widgets/section_card.dart';
+import 'package:masar_app/features/more/presentation/widgets/info_row.dart';
+import 'package:masar_app/features/more/presentation/widgets/option_button.dart';
+import 'package:masar_app/features/more/presentation/widgets/section_card.dart';
+
 
 
 class SettingsScreen extends StatelessWidget {
