@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/core/constants/app_styles.dart';
+import 'package:masar_app/core/constants/custom_app_bar.dart';
 import 'package:masar_app/core/utils/app_validators.dart';
 import 'package:masar_app/core/widgets/failure_widget.dart';
 import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
@@ -77,13 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.bluePrimaryDark,
-          title: Text(
-            " خدمة  العملاء ",
-            style: AppTextStyles.heading24Bold.copyWith(color: Colors.white),
-          ),
-        ),
+        appBar: const CustomAppBar(title: "خدمة  العملاء"),
         body: Column(
           children: [
             Expanded(
@@ -101,6 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     return ListView.builder(
                       controller: _scrollController,
+                      physics:const BouncingScrollPhysics(),
                       padding: const EdgeInsets.all(8),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
