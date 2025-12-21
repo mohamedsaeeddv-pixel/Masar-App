@@ -33,7 +33,7 @@ import 'app_routes.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/home/customer-details',
+    initialLocation: '/more/add-client',
     debugLogDiagnostics: true,
 
     routes: [
