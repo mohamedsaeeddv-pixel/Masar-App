@@ -6,7 +6,7 @@ class AppRoutes {
   // Home
   static const String home = 'home';
   static const String map = 'map';
-  static const String workDetails = 'workDetails';
+  static const String customerDetails = 'customerDetails';
 
   // Profile
   static const String profile = 'profile';

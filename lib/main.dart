@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/routes/app_router.dart';
 // استيراد مكتبات Firebase
 import 'package:firebase_core/firebase_core.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
 
       theme: ThemeData(
         fontFamily: 'Arial',
+        scaffoldBackgroundColor: AppColors.backgroundLight
       
       ),
 

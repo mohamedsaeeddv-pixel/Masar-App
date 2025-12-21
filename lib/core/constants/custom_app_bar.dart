@@ -26,11 +26,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: centerTitle,
       leading: leading,
       actions: actions,
+      actionsIconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
+      iconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
+      
       title: Text(
         title,
         style: AppTextStyles.heading24Bold.copyWith(
           color: Colors.white,
         ),
+        
       ),
     );
   }
