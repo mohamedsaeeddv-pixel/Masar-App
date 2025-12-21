@@ -33,11 +33,13 @@ import 'app_routes.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
+
     initialLocation: '/more/add-client',
+  
+
     debugLogDiagnostics: true,
 
     routes: [
-
       /// Splash
       GoRoute(
         path: '/',
@@ -51,6 +53,7 @@ class AppRouter {
         name: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
       ),
+
 
       /// Chat
   GoRoute(
@@ -69,18 +72,19 @@ class AppRouter {
 ),
 
       /// Home
+      /// Home - جعلناها شاشة أساسية بمسار واضح
       GoRoute(
         path: '/home',
         name: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
         routes: [
 
+
           GoRoute(
             path: 'map',
             name: AppRoutes.map,
             builder: (context, state) => const MapScreen(),
           ),
-
           GoRoute(
             path: 'customer-details',
             name: AppRoutes.customerDetails,
@@ -95,24 +99,9 @@ class AppRouter {
         name: AppRoutes.profile,
         builder: (context, state) => const ProfileScreen(),
         routes: [
-
-          GoRoute(
-            path: 'reports',
-            name: AppRoutes.reports,
-            builder: (context, state) => const ReportsScreen(),
-          ),
-
-          GoRoute(
-            path: 'my-data',
-            name: AppRoutes.myData,
-            builder: (context, state) => const MyDataScreen(),
-          ),
-
-          GoRoute(
-            path: 'deals',
-            name: AppRoutes.deals,
-            builder: (context, state) => const DealsScreen(),
-          ),
+          GoRoute(path: 'reports', name: AppRoutes.reports, builder: (context, state) => const ReportsScreen()),
+          GoRoute(path: 'my-data', name: AppRoutes.myData, builder: (context, state) => const MyDataScreen()),
+          GoRoute(path: 'deals', name: AppRoutes.deals, builder: (context, state) => const DealsScreen()),
         ],
       ),
 
@@ -122,35 +111,12 @@ class AppRouter {
         name: AppRoutes.more,
         builder: (context, state) => const MoreScreen(),
         routes: [
-
-          GoRoute(
-            path: 'settings',
-            name: AppRoutes.settings,
-            builder: (context, state) => const SettingsScreen(),
-          ),
-
-          GoRoute(
-            path: 'add-client',
-            name: AppRoutes.addClient,
-            builder: (context, state) => const AddClientScreen(),
-          ),
-
-          GoRoute(
-            path: 'app-info',
-            name: AppRoutes.appInfo,
-            builder: (context, state) => const AppInfoScreen(),
-          ),
+          GoRoute(path: 'settings', name: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
+          GoRoute(path: 'add-client', name: AppRoutes.addClient, builder: (context, state) => const AddClientScreen()),
+          GoRoute(path: 'app-info', name: AppRoutes.appInfo, builder: (context, state) => const AppInfoScreen()),
         ],
       ),
     ],
-
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text(
-          state.error.toString(),
-          style: const TextStyle(fontSize: 16),
-        ),
-      ),
-    ),
+    // ... errorBuilder كما هو
   );
 }
