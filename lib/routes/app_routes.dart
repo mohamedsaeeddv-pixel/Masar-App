@@ -19,4 +19,7 @@ class AppRoutes {
   static const String settings = 'settings';
   static const String addClient = 'addClient';
   static const String appInfo = 'appInfo';
+
+  // Chat
+  static const String chat = 'chat';
 }

@@ -83,4 +83,19 @@ class AppTextStyles {
     fontSize: 30,
     fontWeight: FontWeight.w700,
   );
+  // ========= Font Size 24 =========
+static const TextStyle heading24Regular = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+);
+
+static const TextStyle heading24SemiBold = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w600,
+);
+
+static const TextStyle heading24Bold = TextStyle(
+  fontSize: 24,
+  fontWeight: FontWeight.w700,
+);
 }

@@ -1,17 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:masar_app/features/chat/data/repos/chats_repo_impel.dart';
+import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
 
-import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
+// Splash & Auth
 import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
-
+import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
 
 // Home
 import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/map_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/work_details_screen.dart';
-
-
-
 
 // Profile
 import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
@@ -25,11 +26,14 @@ import 'package:masar_app/features/more/presentation/screens/settings_screen.dar
 import 'package:masar_app/features/more/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/more/presentation/screens/app_info_screen.dart';
 
+// Chat
+import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
+
 import 'app_routes.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/chat',
     debugLogDiagnostics: true,
 
     routes: [
@@ -48,14 +52,28 @@ class AppRouter {
         builder: (context, state) => const LoginScreen(),
       ),
 
+      /// Chat
+  GoRoute(
+  path: '/chat', 
+  builder: (context, state) {
+    final chatId = "chat_001";
+    final currentUserId = "HuSskh6q0TfOjVqRXkdSDGqfLlI2";
+    return BlocProvider(
+      create: (_) => ChatCubit(
+        repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
+      )..listenMessages(chatId),
+      child: Builder(
+        builder: (context) => 
+    ChatScreen(chatId: chatId, currentUserId: currentUserId),));
+  },
+),
+
       /// Home
       GoRoute(
         path: '/home',
         name: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
         routes: [
-
-         
 
           GoRoute(
             path: 'map',
