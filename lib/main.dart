@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
+import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import 'package:masar_app/routes/app_router.dart';
 // استيراد مكتبات Firebase
 import 'package:firebase_core/firebase_core.dart';
@@ -20,7 +23,13 @@ void main() async {
   }
 
   // 3. تشغيل التطبيق
-  runApp(const MyApp());
+  runApp(
+     BlocProvider( 
+      
+       create: (context) => AuthCubit( AuthRepoImpl())..checkAuth(),
+
+     child: MyApp(),),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -40,15 +49,11 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
-      supportedLocales: const [
-        Locale('ar', 'EG'),
-      ],
-
+      supportedLocales: const [Locale('ar', 'EG')],
 
       theme: ThemeData(
         fontFamily: 'Arial',
-        scaffoldBackgroundColor: AppColors.backgroundLight
-      
+        scaffoldBackgroundColor: AppColors.backgroundLight,
       ),
 
       debugShowCheckedModeBanner: false,

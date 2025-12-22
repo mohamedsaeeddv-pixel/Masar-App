@@ -34,7 +34,7 @@ import 'app_routes.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
 
-    initialLocation: '/more/add-client',
+    initialLocation: '/',
   
 
     debugLogDiagnostics: true,

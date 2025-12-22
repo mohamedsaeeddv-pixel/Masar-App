@@ -1,6 +1,5 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// core/error/failure.dart
 abstract class Failure {
   final String message;
   final String? code;
@@ -11,66 +10,119 @@ abstract class Failure {
   });
 }
 
-// core/error/firebase_failure.dart
+/// Firebase-specific failures
+class FirebaseAuthFailure extends Failure {
+  const FirebaseAuthFailure({
+    required super.message,
+    super.code,
+  });
 
+  /// Handle all FirebaseAuthException codes
+  factory FirebaseAuthFailure.fromAuthException(FirebaseAuthException e) {
+    switch (e.code) {
+      // ===== Network =====
+      case 'network-request-failed':
+        return const FirebaseAuthFailure(
+          message: 'لا يوجد اتصال بالإنترنت',
+          code: 'network-request-failed',
+        );
+
+      // ===== Auth =====
+      case 'user-not-found':
+        return const FirebaseAuthFailure(
+          message: 'المستخدم غير موجود',
+          code: 'user-not-found',
+        );
+
+      case 'wrong-password':
+        return const FirebaseAuthFailure(
+          message: 'كلمة المرور غير صحيحة',
+          code: 'wrong-password',
+        );
+
+      case 'invalid-email':
+        return const FirebaseAuthFailure(
+          message: 'صيغة البريد الإلكتروني غير صحيحة',
+          code: 'invalid-email',
+        );
+
+      case 'user-disabled':
+        return const FirebaseAuthFailure(
+          message: 'تم تعطيل هذا الحساب',
+          code: 'user-disabled',
+        );
+
+      case 'too-many-requests':
+        return const FirebaseAuthFailure(
+          message: 'محاولات كثيرة، حاول لاحقًا',
+          code: 'too-many-requests',
+        );
+
+      case 'email-already-in-use':
+        return const FirebaseAuthFailure(
+          message: 'البريد مستخدم بالفعل',
+          code: 'email-already-in-use',
+        );
+
+      case 'weak-password':
+        return const FirebaseAuthFailure(
+          message: 'كلمة المرور ضعيفة',
+          code: 'weak-password',
+        );
+
+        case 'invalid-credential':
+      return const FirebaseAuthFailure(message: 'البيانات المقدمة غير صالحة أو منتهية الصلاحية', code: 'invalid-credential');
+
+      // ===== Default =====
+      default:
+        return FirebaseAuthFailure(
+          message: e.message ?? 'حدث خطأ غير متوقع',
+          code: e.code,
+        );
+    }
+  }
+}
+
+/// Generic Firebase failures (Firestore, Storage, etc.)
 class FirebaseFailure extends Failure {
   const FirebaseFailure({
     required super.message,
     super.code,
   });
 
-  /// Convert any FirebaseException to FirebaseFailure
+  /// Handle all other FirebaseException codes
   factory FirebaseFailure.fromException(FirebaseException e) {
     switch (e.code) {
-      // Network
+      // ===== Network =====
       case 'network-request-failed':
         return const FirebaseFailure(
-          message: 'No internet connection',
+          message: 'لا يوجد اتصال بالإنترنت',
           code: 'network-request-failed',
         );
 
-      // Permission
+      // ===== Firestore =====
       case 'permission-denied':
         return const FirebaseFailure(
-          message: 'Permission denied',
+          message: 'ليس لديك صلاحية الوصول',
           code: 'permission-denied',
         );
 
-      // Auth
-      case 'user-not-found':
+      case 'not-found':
         return const FirebaseFailure(
-          message: 'User not found',
-          code: 'user-not-found',
+          message: 'البيانات غير موجودة',
+          code: 'not-found',
         );
 
-      case 'wrong-password':
+      case 'unavailable':
         return const FirebaseFailure(
-          message: 'Incorrect password',
-          code: 'wrong-password',
+          message: 'الخدمة غير متاحة حاليًا',
+          code: 'unavailable',
         );
 
-      case 'email-already-in-use':
-        return const FirebaseFailure(
-          message: 'Email already in use',
-          code: 'email-already-in-use',
-        );
-
-      case 'invalid-email':
-        return const FirebaseFailure(
-          message: 'Invalid email address',
-          code: 'invalid-email',
-        );
-
-      case 'weak-password':
-        return const FirebaseFailure(
-          message: 'Password is too weak',
-          code: 'weak-password',
-        );
-
-      // Default
+      // ===== Default =====
       default:
         return FirebaseFailure(
-          message: e.message ?? 'Unknown Firebase error',
+          message: e.message ?? 'حدث خطأ غير متوقع',
           code: e.code,
         );
     }

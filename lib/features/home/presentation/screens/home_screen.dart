@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                           Map<String, dynamic> data = doc.data() as Map<String, dynamic>? ?? {};
 
                           // استلام الـ ID في متغير لاستخدامه برمجياً فقط (مثل الاستلام أو الحذف)
-                          String taskId = doc.id;
+                          // String taskId = doc.id;
 
                           return _buildTaskItem(
                             data['taskName'] ?? 'مهمة بدون اسم', // العنوان اللي هيظهر للمستخدم

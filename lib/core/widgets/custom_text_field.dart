@@ -6,6 +6,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final Function(String)? onFieldSubmitted;
 
   const CustomTextField({
     super.key,
@@ -13,7 +14,8 @@ class CustomTextField extends StatefulWidget {
     required this.icon,
     required this.controller,
     this.isPassword = false,
-    this.validator,
+    this.validator, 
+    this.onFieldSubmitted,
   });
 
   @override
@@ -26,6 +28,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onFieldSubmitted:widget.onFieldSubmitted ,
       controller: widget.controller,
       textAlign: TextAlign.right,
       obscureText: widget.isPassword ? obscure : false,
