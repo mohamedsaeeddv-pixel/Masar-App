@@ -1,60 +1,62 @@
+// features/profile/presentation/widgets/menu_item.dart
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_styles.dart';
 
 class MenuItem extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color iconBg;
   final Color iconColor;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   const MenuItem({
-    super.key,
     required this.title,
     required this.icon,
     required this.iconBg,
     required this.iconColor,
-    this.onTap,
+    required this.onTap,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ListTile(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
+      // تأكد إن الـ ListTile بيحترم اتجاه اللغة
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
 
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: iconColor),
-            ),
+      // 1. السهم (على الشمال في العربي)
+      leading: const Icon(
+        Icons.arrow_back_ios_new,
+        size: 14, // صغرنا الحجم شوية ليكون أرق زي الصورة
+        color: AppColors.textMutedGray,
+      ),
 
-            const Spacer(),
+      // 2. النص (في النص مائل لليمين)
+      title: Align(
+        alignment: Alignment.centerRight,
+        child: Text(
+          title,
+          style: AppTextStyles.body16SemiBold.copyWith(
+            color: AppColors.textPrimaryDark,
+          ),
+        ),
+      ),
 
-
-            Row(
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(width: 20),
-                const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  size: 14,
-                ),
-              ],
-            ),
-          ],
+      // 3. الأيقونة الملونة (على اليمين في العربي)
+      trailing: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: iconBg,
+          borderRadius: BorderRadius.circular(10), // خليناها 10 عشان تبان أنعم
+        ),
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 20,
         ),
       ),
     );
   }
 }
-

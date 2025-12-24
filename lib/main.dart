@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // أضف هذا
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/routes/app_router.dart';
-// استيراد مكتبات Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
+// استيراد ملفات الإعدادات
+import 'features/settings/data/repos/settings_repo_impl.dart';
+import 'features/settings/presentation/manager/settings_cubit.dart';
+import 'features/settings/presentation/manager/settings_state.dart';
 
 void main() async {
-  // 1. التأكد من تهيئة الـ Widgets
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // 2. تهيئة Firebase وحل مشكلة الـ Initialize Error نهائياً
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -19,7 +24,6 @@ void main() async {
     debugPrint("Firebase already initialized or error: $e");
   }
 
-  // 3. تشغيل التطبيق
   runApp(const MyApp());
 }
 
@@ -28,30 +32,47 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: AppRouter.router,
+    // 1. توفير الـ Cubit لكل التطبيق
+    return BlocProvider(
+      create: (context) => SettingsCubit(SettingsRepoImpl())..loadSettings(),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, state) {
 
-      // ضبط اللغة الافتراضية للعربية
-      locale: const Locale('ar', 'EG'),
+          // 2. تحديد اللغة ديناميكياً
+          String currentLang = 'ar'; // القيمة الافتراضية
+          if (state is SettingsLoaded) {
+            currentLang = state.settings.language;
+          } else if (state is SettingsUpdated) {
+            currentLang = state.settings.language;
+          }
 
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+          return MaterialApp.router(
+            routerConfig: AppRouter.router,
 
-      supportedLocales: const [
-        Locale('ar', 'EG'),
-      ],
+            // 3. تطبيق اللغة المختارة
+            locale: Locale(currentLang),
 
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
 
-      theme: ThemeData(
-        fontFamily: 'Arial',
-        scaffoldBackgroundColor: AppColors.backgroundLight
-      
+            // دعم اللغتين عشان الـ Directionality يشتغل صح
+            supportedLocales: const [
+              Locale('ar'),
+              Locale('en'),
+            ],
+
+            theme: ThemeData(
+              fontFamily: 'Arial',
+              scaffoldBackgroundColor: AppColors.backgroundLight,
+            ),
+
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
-
-      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_styles.dart';
+
 class InfoTile extends StatelessWidget {
   final String title;
   final String value;
@@ -14,9 +17,15 @@ class InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey),
-      title: Text(title),
-      subtitle: Text(value),
+      leading: Icon(icon, color: AppColors.bluePrimaryDark),
+      title: Text(
+        title,
+        style: AppTextStyles.body14Regular.copyWith(color: AppColors.textMutedGray),
+      ),
+      subtitle: Text(
+        value, // ستعرض القيمة القادمة من Firestore
+        style: AppTextStyles.body16Bold.copyWith(color: AppColors.textPrimaryDark),
+      ),
     );
   }
 }

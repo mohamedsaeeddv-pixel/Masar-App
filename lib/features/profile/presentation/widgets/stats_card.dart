@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+// استيراد الـ Core
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_styles.dart';
+
 class StatsCard extends StatelessWidget {
   final String value;
   final String label;
@@ -14,21 +18,32 @@ class StatsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground, // Core color
         borderRadius: BorderRadius.circular(12),
+        // إضافة shadow بسيط عشان يبرز الكارت زي ما عملنا في الـ Daily Tasks
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1565C0),
+            style: AppTextStyles.subtitle18Bold.copyWith(
+              color: AppColors.bluePrimaryDark, // Core color
             ),
           ),
           const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: Colors.grey)),
+          Text(
+            label,
+            style: AppTextStyles.body14Regular.copyWith(
+              color: AppColors.textMutedGray, // Core color
+            ),
+          ),
         ],
       ),
     );

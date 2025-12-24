@@ -11,6 +11,7 @@ abstract class Failure {
   });
 }
 
+
 // core/error/firebase_failure.dart
 
 class FirebaseFailure extends Failure {
@@ -75,4 +76,7 @@ class FirebaseFailure extends Failure {
         );
     }
   }
+
 }
+
+

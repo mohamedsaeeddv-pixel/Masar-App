@@ -5,17 +5,16 @@ class AppRoutes {
 
   // Home
   static const String home = 'home';
+  // ملحوظة: لو الـ Map و الـ CustomerDetails بيتفتحوا بـ push عادي برضه، شيلهم.
   static const String map = 'map';
   static const String customerDetails = 'customerDetails';
 
   // Profile
   static const String profile = 'profile';
-  static const String reports = 'reports';
-  static const String myData = 'myData';
-  static const String deals = 'deals';
+  // شيلنا reports و dashboard و deals لأنهم مابقوش Routes معرفين في GoRouter
 
   // More
-  static const String more = 'more';
+  // لو الـ settings و الـ addClient بيتفتحوا من الـ Router سيبهم، لو Navigator شيلهم
   static const String settings = 'settings';
   static const String addClient = 'addClient';
   static const String appInfo = 'appInfo';
