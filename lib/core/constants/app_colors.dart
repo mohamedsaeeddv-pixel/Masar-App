@@ -1,64 +1,57 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-
   /* ============================= */
   /* Backgrounds */
   /* ============================= */
-
   static const backgroundLight = Color(0xFFEEEEEE);
   static const backgroundWhite = Color(0xFFFFFFFF);
+  static const mutedBackground = Color(0xFFF5F5F5);
 
   /* ============================= */
   /* Text Colors */
   /* ============================= */
-
   static const textPrimaryDark = Color(0xFF212121);
   static const textMutedGray = Color(0xFF616161);
   static const textOnPrimary = Color(0xFFFFFFFF);
+  static const textGreen = Color(0xFF4CAF50);
+  static const textOrange = Color(0xFFFF9800);
+  static const textRed = Color(0xFFD32F2F);
+  static const textBlue = Color(0xFF2196F3);
 
   /* ============================= */
   /* Card & Popover */
   /* ============================= */
-
   static const cardBackground = Color(0xFFFFFFFF);
   static const popoverBackground = Color(0xFFFFFFFF);
 
   /* ============================= */
   /* Primary – Blue */
   /* ============================= */
-
   static const bluePrimaryDark = Color(0xFF0D47A1);
   static const blueRing = Color(0xFF0D47A1);
+  static const blueButton = Color(0xFF2196F3);
+  static const bluePrimaryLight = Color(0xFFEFF6FF);
+  static const blueSecondaryLightForBorder = Color(0XFFBEDBFF);
 
   /* ============================= */
   /* Secondary – Cyan */
   /* ============================= */
-
   static const cyanSecondary = Color(0xFF00ACC1);
 
   /* ============================= */
   /* Accent – Amber */
   /* ============================= */
-
   static const amberAccent = Color(0xFFFFC107);
-
-  /* ============================= */
-  /* Muted */
-  /* ============================= */
-
-  static const mutedBackground = Color(0xFFF5F5F5);
 
   /* ============================= */
   /* Destructive */
   /* ============================= */
-
   static const redDestructive = Color(0xFFD32F2F);
 
   /* ============================= */
   /* Borders & Inputs */
   /* ============================= */
-
   static const borderLight = Color.fromRGBO(0, 0, 0, 0.12);
   static const inputBorder = Color.fromRGBO(0, 0, 0, 0.23);
   static const inputBackground = Color(0xFFFFFFFF);
@@ -67,7 +60,6 @@ abstract class AppColors {
   /* ============================= */
   /* Charts */
   /* ============================= */
-
   static const chartBlue = Color(0xFF0D47A1);
   static const chartCyan = Color(0xFF00ACC1);
   static const chartAmber = Color(0xFFFFC107);
@@ -77,11 +69,21 @@ abstract class AppColors {
   /* ============================= */
   /* Sidebar */
   /* ============================= */
-
   static const sidebarBackground = Color(0xFFFFFFFF);
   static const sidebarText = Color(0xFF212121);
   static const sidebarPrimary = Color(0xFF0D47A1);
   static const sidebarPrimaryText = Color(0xFFFFFFFF);
   static const sidebarAccentBackground = Color(0xFFF5F5F5);
   static const sidebarBorder = Color.fromRGBO(0, 0, 0, 0.12);
+
+  /* ============================= */
+  /* Customer Details Page Specific */
+  /* ============================= */
+  static const green = Color(0xFF4CAF50);
+  static const lightGreenBackground = Color(0x1F4CAF50); // green with opacity ~12%
+  static const orange = Color(0xFFFF9800);
+  static const blue = Color(0xFF2196F3);
+  static const red = Color(0xFFD32F2F);
+  static const grayText = Color(0xFF757575);
+  static const lightOrangeBackground = Color(0xFFFFF7ED);
 }
