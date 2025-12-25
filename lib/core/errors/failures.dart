@@ -17,6 +17,8 @@ class FirebaseAuthFailure extends Failure {
     super.code,
   });
 
+// core/error/firebase_failure.dart
+
   /// Handle all FirebaseAuthException codes
   factory FirebaseAuthFailure.fromAuthException(FirebaseAuthException e) {
     switch (e.code) {
@@ -127,4 +129,7 @@ class FirebaseFailure extends Failure {
         );
     }
   }
+
 }
+
+

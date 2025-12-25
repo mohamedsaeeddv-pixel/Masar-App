@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
-import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
-import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import 'package:masar_app/routes/app_router.dart';
-// استيراد مكتبات Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+// استيراد ملفات الإعدادات
+import 'features/settings/data/repos/settings_repo_impl.dart';
+import 'features/settings/presentation/manager/settings_cubit.dart';
+import 'features/settings/presentation/manager/settings_state.dart';
 
 void main() async {
-  // 1. التأكد من تهيئة الـ Widgets
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. تهيئة Firebase وحل مشكلة الـ Initialize Error نهائياً
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -23,13 +25,7 @@ void main() async {
   }
 
   // 3. تشغيل التطبيق
-  runApp(
-     BlocProvider( 
-      
-       create: (context) => AuthCubit( AuthRepoImpl())..checkAuth(),
-
-     child: MyApp(),),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -37,26 +33,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: AppRouter.router,
+    // 1. توفير الـ Cubit لكل التطبيق
+    return BlocProvider(
+      create: (context) => SettingsCubit(SettingsRepoImpl())..loadSettings(),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, state) {
+          // 2. تحديد اللغة ديناميكياً
+          String currentLang = 'ar'; // القيمة الافتراضية
+          if (state is SettingsLoaded) {
+            currentLang = state.settings.language;
+          } else if (state is SettingsUpdated) {
+            currentLang = state.settings.language;
+          }
 
-      // ضبط اللغة الافتراضية للعربية
-      locale: const Locale('ar', 'EG'),
+          return MaterialApp.router(
+            routerConfig: AppRouter.router,
 
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+            // 3. تطبيق اللغة المختارة
+            locale: Locale(currentLang),
 
-      supportedLocales: const [Locale('ar', 'EG')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
 
-      theme: ThemeData(
-        fontFamily: 'Arial',
-        scaffoldBackgroundColor: AppColors.backgroundLight,
+            // دعم اللغتين عشان الـ Directionality يشتغل صح
+            supportedLocales: const [Locale('ar'), Locale('en')],
+
+            theme: ThemeData(
+              fontFamily: 'Arial',
+              scaffoldBackgroundColor: AppColors.backgroundLight,
+            ),
+
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
-
-      debugShowCheckedModeBanner: false,
     );
   }
 }

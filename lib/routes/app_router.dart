@@ -1,122 +1,100 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:masar_app/features/chat/data/repos/chats_repo_impel.dart';
-import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Splash & Auth
-import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
-import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
-
-// Home
-import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
-import 'package:masar_app/features/home/presentation/screens/map_screen.dart';
-import 'package:masar_app/features/home/presentation/screens/customer_details_screen.dart';
-
-// Profile
-import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
-import 'package:masar_app/features/profile/presentation/screens/reports_screen.dart';
-import 'package:masar_app/features/profile/presentation/screens/my_data_screen.dart';
-import 'package:masar_app/features/profile/presentation/screens/deals_screen.dart';
-
-// More
-import 'package:masar_app/features/more/presentation/screens/more_screen.dart';
-import 'package:masar_app/features/more/presentation/screens/settings_screen.dart';
-import 'package:masar_app/features/more/presentation/screens/add_client_screen.dart';
-import 'package:masar_app/features/more/presentation/screens/app_info_screen.dart';
-
-// Chat
+// --- Imports (Screens) ---
+import 'package:masar_app/features/add_client/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/customer_details_screen.dart';
+import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/HomeScreen.dart';
+import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
+import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
+
+// --- Imports (Managers & Repos) ---
+import 'package:masar_app/features/login/presentation/manager/login_cubit.dart';
+import 'package:masar_app/features/login/data/repos/login_repo_impl.dart';
+import 'package:masar_app/features/add_client/presentation/manager/add_client_cubit.dart';
+import 'package:masar_app/features/add_client/data/repos/add_client_repo_impl.dart';
+import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
+import 'package:masar_app/features/chat/data/repos/chats_repo_impel.dart';
+import 'package:masar_app/features/home/presentation/manager/home_cubit.dart';
 
 import 'app_routes.dart';
 
 class AppRouter {
+  static final GlobalKey<NavigatorState> parentNavigatorKey = GlobalKey<NavigatorState>();
+
   static final GoRouter router = GoRouter(
-
-    initialLocation: '/home/customer-details',
-  
-
+    navigatorKey: parentNavigatorKey,
+    initialLocation: '/',
     debugLogDiagnostics: true,
-
     routes: [
-      /// Splash
+      // 1. Splash
       GoRoute(
         path: '/',
         name: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
       ),
 
-      /// Login
+      // 2. Login (مغلف بالـ Provider بتاعه)
       GoRoute(
         path: '/login',
         name: AppRoutes.login,
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => LoginCubit(LoginRepoImpl()),
+          child: const LoginScreen(),
+        ),
       ),
 
-
-      /// Chat
-  GoRoute(
-  path: '/chat', 
-  builder: (context, state) {
-    final chatId = "chat_001";
-    final currentUserId = "HuSskh6q0TfOjVqRXkdSDGqfLlI2";
-    return BlocProvider(
-      create: (_) => ChatCubit(
-        repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
-      )..listenMessages(chatId),
-      child: Builder(
-        builder: (context) => 
-    ChatScreen(chatId: chatId, currentUserId: currentUserId),));
-  },
-),
-
-      /// Home
-      /// Home - جعلناها شاشة أساسية بمسار واضح
+      // 3. Home (مغلف بالـ Provider بتاع الـ Navbar)
       GoRoute(
         path: '/home',
         name: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
-        routes: [
-
-
-          GoRoute(
-            path: 'map',
-            name: AppRoutes.map,
-            builder: (context, state) => const MapScreen(),
-          ),
-          GoRoute(
-            path: 'customer-details',
-            name: AppRoutes.customerDetails,
-            builder: (context, state) => const CustomerDetailsScreen(),
-          ),
-        ],
+        builder: (context, state) => BlocProvider(
+          create: (context) => HomeCubit(),
+          child: const HomeScreen(),
+        ),
       ),
 
-      /// Profile
+      // 4. Profile
       GoRoute(
         path: '/profile',
         name: AppRoutes.profile,
         builder: (context, state) => const ProfileScreen(),
-        routes: [
-          GoRoute(path: 'reports', name: AppRoutes.reports, builder: (context, state) => const ReportsScreen()),
-          GoRoute(path: 'my-data', name: AppRoutes.myData, builder: (context, state) => const MyDataScreen()),
-          GoRoute(path: 'deals', name: AppRoutes.deals, builder: (context, state) => const DealsScreen()),
-        ],
       ),
 
-      /// More
+      // 5. Add Client (مغلف بالـ Provider بتاعه)
       GoRoute(
-        path: '/more',
-        name: AppRoutes.more,
-        builder: (context, state) => const MoreScreen(),
-        routes: [
-          GoRoute(path: 'settings', name: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
-          GoRoute(path: 'add-client', name: AppRoutes.addClient, builder: (context, state) => const AddClientScreen()),
-          GoRoute(path: 'app-info', name: AppRoutes.appInfo, builder: (context, state) => const AppInfoScreen()),
-        ],
+        path: '/add-client',
+        name: AppRoutes.addClient,
+        builder: (context, state) => BlocProvider(
+          create: (context) => AddClientCubit(AddClientRepoImpl()),
+          child: const AddClientScreen(),
+        ),
       ),
+
+      // 6. Chat (مغلف بالـ Provider والبيانات المطلوبة)
+      GoRoute(
+        path: '/chat',
+        name: AppRoutes.chat,
+        builder: (context, state) => BlocProvider(
+          create: (context) => ChatCubit(
+            repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
+          )..listenMessages("chat_001"),
+          child: const ChatScreen(chatId: "chat_001", currentUserId: "HuSskh6q0TfOjVqRXkdSDGqfLlI2"),
+        ),
+      ),
+
+      GoRoute(path: '/customer-details', name: AppRoutes.customerDetails, builder: (context, state) => const CustomerDetailsScreen()),
     ],
-    // ... errorBuilder كما هو
   );
+
+
 }
+
+
+
+
+

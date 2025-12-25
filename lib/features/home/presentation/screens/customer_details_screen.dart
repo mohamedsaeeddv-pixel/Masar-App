@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/core/constants/app_styles.dart';
-import 'package:masar_app/core/widgets/custom_app_bar.dart';
+import 'package:masar_app/core/constants/custom_app_bar.dart';
 import 'package:masar_app/core/widgets/custom_dialog.dart';
 import 'package:masar_app/features/home/presentation/widgets/product_items_section.dart';
 
