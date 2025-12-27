@@ -8,13 +8,12 @@ import 'package:masar_app/features/add_client/presentation/screens/add_client_sc
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/customer_details_screen.dart';
 import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
-import 'package:masar_app/features/home/presentation/screens/HomeScreen.dart';
+import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
 import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
 
 // --- Imports (Managers & Repos) ---
-import 'package:masar_app/features/login/presentation/manager/login_cubit.dart';
-import 'package:masar_app/features/login/data/repos/login_repo_impl.dart';
+
 import 'package:masar_app/features/add_client/presentation/manager/add_client_cubit.dart';
 import 'package:masar_app/features/add_client/data/repos/add_client_repo_impl.dart';
 import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
@@ -24,7 +23,8 @@ import 'package:masar_app/features/home/presentation/manager/home_cubit.dart';
 import 'app_routes.dart';
 
 class AppRouter {
-  static final GlobalKey<NavigatorState> parentNavigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> parentNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   static final GoRouter router = GoRouter(
     navigatorKey: parentNavigatorKey,
@@ -42,10 +42,11 @@ class AppRouter {
       GoRoute(
         path: '/login',
         name: AppRoutes.login,
-        builder: (context, state) => BlocProvider(
-          create: (context) => LoginCubit(LoginRepoImpl()),
-          child: const LoginScreen(),
-        ),
+        builder: (context, state) => LoginScreen(),
+        //  BlocProvider(
+        //   create: (context) => LoginCubit(LoginRepoImpl()),
+        //   child: const LoginScreen(),
+        // ),
       ),
 
       // 3. Home (مغلف بالـ Provider بتاع الـ Navbar)
@@ -79,22 +80,28 @@ class AppRouter {
       GoRoute(
         path: '/chat',
         name: AppRoutes.chat,
-        builder: (context, state) => BlocProvider(
-          create: (context) => ChatCubit(
-            repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
-          )..listenMessages("chat_001"),
-          child: const ChatScreen(chatId: "chat_001", currentUserId: "HuSskh6q0TfOjVqRXkdSDGqfLlI2"),
-        ),
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+
+          final chatId = data['chatId'] as String;
+          final currentUserId = data['currentUserId'] as String;
+
+          return BlocProvider(
+            create: (_) => ChatCubit(
+              repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
+              chatId: chatId,
+              currentUserId: currentUserId,
+            )..listenMessages(),
+            child: ChatScreen(chatId: chatId, currentUserId: currentUserId),
+          );
+        },
       ),
 
-      GoRoute(path: '/customer-details', name: AppRoutes.customerDetails, builder: (context, state) => const CustomerDetailsScreen()),
+      GoRoute(
+        path: '/customer-details',
+        name: AppRoutes.customerDetails,
+        builder: (context, state) => const CustomerDetailsScreen(),
+      ),
     ],
   );
-
-
 }
-
-
-
-
-

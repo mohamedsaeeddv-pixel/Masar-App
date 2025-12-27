@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // إضافة الـ Bloc
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_styles.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
-import '../manager/login_cubit.dart'; // استيراد الـ Cubit
 
 class LoginFormBody extends StatelessWidget {
   LoginFormBody({super.key});
@@ -77,7 +77,7 @@ class LoginFormBody extends StatelessWidget {
             text: 'تسجيل الدخول',
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                context.read<LoginCubit>().loginUser(
+                context.read<AuthCubit>().login(
                   email: _emailController.text.trim(),
                   password: _passwordController.text,
                 );

@@ -30,7 +30,7 @@ class OptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             // استخدام ألوان الـ Core
             color: isSelected
-                ? AppColors.bluePrimaryDark.withOpacity(0.08)
+                ? AppColors.bluePrimaryDark.withValues(alpha: 0.08)
                 : AppColors.backgroundWhite,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../routes/app_routes.dart';
-import '../manager/login_cubit.dart';
 import '../widgets/login_error_dialog.dart';
 import '../widgets/login_form_body.dart';
 import '../widgets/login_header_section.dart';
@@ -30,25 +30,25 @@ class LoginScreen extends StatelessWidget {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: BlocConsumer<LoginCubit, LoginState>(
+                child: BlocConsumer<AuthCubit, AuthCubitState>(
                   listener: (context, state) {
-                    if (state is LoginSuccess) {
+                    if (state is AuthCubitAuthenticated) {
                       context.goNamed(AppRoutes.home);
-                    } else if (state is LoginFailure) {
-                      showLoginErrorDialog(context, state.errorMessage);
+                    } else if (state is AuthCubitError) {
+                      showLoginErrorDialog(context, state.message);
                     }
                   },
                   builder: (context, state) {
                     return AbsorbPointer(
                       // هذا السطر يمنع المستخدم من التفاعل مع الشاشة أثناء التحميل (Clean Code)
-                      absorbing: state is LoginLoading,
+                      absorbing: state is AuthCubitLoading,
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         child: Column(
                           children: [
                             // شريط تحميل أنيق يظهر فقط وقت التحميل
                             AnimatedOpacity(
-                              opacity: state is LoginLoading ? 1.0 : 0.0,
+                              opacity: state is AuthCubitLoading ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 300),
                               child: const Padding(
                                 padding: EdgeInsets.only(top: 20),

@@ -1,37 +1,54 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:masar_app/core/errors/failures.dart';
 import 'package:masar_app/features/chat/data/models/chats_model.dart';
 import 'package:masar_app/features/chat/data/repos/chats_repo.dart';
-
-import 'chat_state.dart';
+import 'package:masar_app/features/chat/presentation/manager/chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   final ChatsRepo repo;
-  StreamSubscription<Either<Failure, List<ChatModel>>>? _messagesSubscription;
+  final String chatId;
+  final String currentUserId;
 
-  ChatCubit({required this.repo}) : super(ChatInitial());
+  StreamSubscription<Either<Failure, List<ChatModel>>>?
+      _messagesSubscription;
 
- void listenMessages(String chatId) {
-  emit(ChatLoading());
-  _messagesSubscription?.cancel();
+  ChatCubit({
+    required this.repo,
+    required this.chatId,
+    required this.currentUserId,
+  }) : super(ChatInitial());
 
-  _messagesSubscription = repo.listenMessages(chatId).listen((either) {
-    either.fold(
-      (failure) => emit(ChatError(failure.message)),
-      (messages) => emit(ChatSuccess(messages)),
+  void listenMessages() {
+    _messagesSubscription?.cancel();
+
+    emit(ChatLoading());
+
+    _messagesSubscription = repo.listenMessages(chatId).listen(
+      (either) {
+        either.fold(
+          (failure) => emit(ChatError(failure.message)),
+          (messages) => emit(ChatSuccess(messages)),
+        );
+      },
     );
-  });
-}
+  }
 
-Future<void> sendMessage(String chatId, String senderId, String content) async {
-  final result = await repo.sendMessage(chatId, senderId, content);
-  result.fold(
-    (failure) => emit(ChatError(failure.message)),
-    (_) => null,
-  );
-}
+  Future<void> sendMessage(String content) async {
+    final result = await repo.sendMessage(
+      chatId,
+      currentUserId,
+      content,
+    );
+
+    result.fold(
+      (failure) => emit(ChatError(failure.message)),
+      (_) {},
+    );
+  }
+
   @override
   Future<void> close() {
     _messagesSubscription?.cancel();

@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
 import '../../../dashboard/presentation/screens/dashboard_screen.dart';
-import '../../../login/data/repos/login_repo_impl.dart';
 import '../../../reports/presentation/screens/reports_screen.dart';
 import '../../data/repos/profile_repo_impl.dart';
 import '../manager/profile_cubit.dart';
@@ -198,7 +198,7 @@ class ProfileScreen extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
-              await LoginRepoImpl().logout();
+              await AuthRepoImpl().logout();
               if (context.mounted) context.goNamed(AppRoutes.login);
             },
             child: const Text('خروج', style: TextStyle(color: Colors.white)),

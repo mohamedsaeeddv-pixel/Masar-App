@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
+import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import 'package:masar_app/routes/app_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -34,42 +36,50 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. توفير الـ Cubit لكل التطبيق
-    return BlocProvider(
-      create: (context) => SettingsCubit(SettingsRepoImpl())..loadSettings(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SettingsCubit(SettingsRepoImpl())..loadSettings(),
+        ),
+        BlocProvider(
+          create: (context) => AuthCubit(AuthRepoImpl())..checkAuth(),
+        ),
+      ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           // 2. تحديد اللغة ديناميكياً
-          String currentLang = 'ar'; // القيمة الافتراضية
-          if (state is SettingsLoaded) {
-            currentLang = state.settings.language;
-          } else if (state is SettingsUpdated) {
-            currentLang = state.settings.language;
-          }
-
-          return MaterialApp.router(
-            routerConfig: AppRouter.router,
-
-            // 3. تطبيق اللغة المختارة
-            locale: Locale(currentLang),
-
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-
-            // دعم اللغتين عشان الـ Directionality يشتغل صح
-            supportedLocales: const [Locale('ar'), Locale('en')],
-
-            theme: ThemeData(
-              fontFamily: 'Arial',
-              scaffoldBackgroundColor: AppColors.backgroundLight,
-            ),
-
-            debugShowCheckedModeBanner: false,
-          );
-        },
-      ),
-    );
+            String currentLang = 'ar'; // القيمة الافتراضية
+            if (state is SettingsLoaded) {
+              currentLang = state.settings.language;
+            } else if (state is SettingsUpdated) {
+              currentLang = state.settings.language;
+            }
+      
+            return MaterialApp.router(
+              routerConfig: AppRouter.router,
+      
+              // 3. تطبيق اللغة المختارة
+              locale: Locale(currentLang),
+      
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+      
+              // دعم اللغتين عشان الـ Directionality يشتغل صح
+              supportedLocales: const [Locale('ar'), Locale('en')],
+      
+              theme: ThemeData(
+                fontFamily: 'Arial',
+                scaffoldBackgroundColor: AppColors.backgroundLight,
+              ),
+      
+              debugShowCheckedModeBanner: false,
+            );
+          },
+        ),
+      );
+    
   }
 }

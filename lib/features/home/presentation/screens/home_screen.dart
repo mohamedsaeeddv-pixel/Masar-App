@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:masar_app/core/widgets/custom_chat_btn.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import 'package:masar_app/routes/app_routes.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
@@ -86,10 +87,19 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-
           floatingActionButton: CustomChatBtn(
             onPressed: () {
-              context.pushNamed(AppRoutes.chat);
+              context.pushNamed(
+                AppRoutes.chat,
+                extra: {
+                  'chatId': 'chat_001',
+                  'currentUserId':
+                      (context.read<AuthCubit>().state
+                              as AuthCubitAuthenticated)
+                          .user
+                          .uid,
+                },
+              );
             },
           ),
           body: PageView(
@@ -104,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
