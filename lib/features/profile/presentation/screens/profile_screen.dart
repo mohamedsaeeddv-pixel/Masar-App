@@ -5,6 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
 import '../../../dashboard/presentation/screens/dashboard_screen.dart';
+import '../../../deals_history/data/repos/deals_repo_impl.dart';
+import '../../../deals_history/presentation/manager/deals_cubit.dart';
+import '../../../deals_history/presentation/screens/deals_screen.dart';
 import '../../../reports/presentation/screens/reports_screen.dart';
 import '../../data/repos/profile_repo_impl.dart';
 import '../manager/profile_cubit.dart';
@@ -110,7 +113,17 @@ class ProfileScreen extends StatelessWidget {
                             iconBg: const Color(0xFFFFF3E0),
                             iconColor: AppColors.chartAmber,
                             onTap: () {
-                              // context.pushNamed('deals');
+                              // الانتقال المباشر مع حقن الـ Provider يدوياً (نظام المطعم)
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    // بنجهز الطباخ (RepoImpl) والويتر (Cubit) قبل ما نفتح الشاشة
+                                    create: (context) => DealsCubit(DealsRepoImpl())..getDeals(),
+                                    child: const DealsScreen(),
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ],
