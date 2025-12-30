@@ -23,7 +23,7 @@ class StatsCard extends StatelessWidget {
         // إضافة shadow بسيط عشان يبرز الكارت زي ما عملنا في الـ Daily Tasks
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

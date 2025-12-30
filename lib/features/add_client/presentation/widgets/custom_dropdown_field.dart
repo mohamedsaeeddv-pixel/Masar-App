@@ -34,6 +34,7 @@ class CustomDropdownField extends StatelessWidget {
           ),
         ),
         DropdownButtonFormField<String>(
+          value: value,
           validator: (val) => val == null ? "يرجى الاختيار" : null,
           decoration: InputDecoration(
             filled: true,
