@@ -42,7 +42,7 @@ class GoalProgressCard extends StatelessWidget {
                 ),
               ),
               Icon(Icons.track_changes_outlined,
-                  color: Colors.white.withValues(alpha: 0.9), size: 28),
+                  color: Colors.white.withOpacity(0.9), size: 28),
             ],
           ),
           const SizedBox(height: 25),
@@ -75,7 +75,7 @@ class GoalProgressCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -118,7 +118,7 @@ class GoalProgressCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -138,7 +138,7 @@ class GoalProgressCard extends StatelessWidget {
                 if (unit.isNotEmpty)
                   Text(unit, style: const TextStyle(color: Colors.white, fontSize: 14)),
                 Text('/$target',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 16)),
+                    style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16)),
                 Text(current,
                     style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
               ],
@@ -151,7 +151,7 @@ class GoalProgressCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
             value: safeProgress,
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            backgroundColor: Colors.white.withOpacity(0.2),
             color: color,
             minHeight: 12,
           ),

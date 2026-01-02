@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2600),
+      duration: const Duration(milliseconds: 1500),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -40,6 +40,10 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+    // التعديل هنا: ننتظر حتى يبدأ فلاتر بالرسم فعلياً قبل حذف الشاشة الثابتة
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   FlutterNativeSplash.remove();
+    // });
 
     _controller.forward();
 
@@ -59,6 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundWhite,
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -67,26 +72,37 @@ class _SplashScreenState extends State<SplashScreen>
             end: Alignment.bottomCenter,
             colors: [
               AppColors.backgroundWhite,
-              AppColors.backgroundLight.withRed(1000),
+              AppColors.backgroundLight.withOpacity(0.5),
             ],
           ),
         ),
-        child: 
-            
-            Center(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Image.asset(
-                    AssetsData.logo,
-                    height: 240,
-                  ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Image.asset(
+                  AssetsData.logo,
+                  height: 240,
                 ),
               ),
             ),
-           
-        
+            const Spacer(),
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 50.0),
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.bluePrimaryDark),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
