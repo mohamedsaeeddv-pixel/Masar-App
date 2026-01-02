@@ -22,48 +22,54 @@ class DailyTasksScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => context.read<TasksCubit>().getTasks(),
-        child: BlocBuilder<TasksCubit, TasksState>(
-          builder: (context, state) {
-            if (state is TasksLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-      
-            if (state is TasksSuccess) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const ProgressCard(),
-                    const SizedBox(height: 16),
-                    const NavigationCard(),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'المهام المعلقة',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: () async => context.read<TasksCubit>().getTasks(),
+            child: BlocBuilder<TasksCubit, TasksState>(
+              builder: (context, state) {
+                if (state is TasksLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is TasksSuccess) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const ProgressCard(),
+                        const SizedBox(height: 16),
+                        const NavigationCard(),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'المهام المعلقة',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+
+                        state.tasks.isEmpty
+                            ? _buildEmptyState()
+                            : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: state.tasks.length,
+                          itemBuilder: (context, index) => TaskItem(task: state.tasks[index]),
+                        ),
+
+                        const SizedBox(height: 100), // مساحة للـ FAB
+                      ],
                     ),
-                    const SizedBox(height: 12),
-      
-                    state.tasks.isEmpty
-                        ? _buildEmptyState()
-                        : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: state.tasks.length,
-                      itemBuilder: (context, index) => TaskItem(task: state.tasks[index]),
-                    ),
-      
-                    const SizedBox(height: 100), // مساحة للـ FAB
-                  ],
-                ),
-              );
-            }
-            return const SizedBox();
-          },
-        ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          ),
+          // إعادة زر المحادثة (FAB) في مكانه الصحيح
+          _buildChatFAB(),
+        ],
       ),
     );
   }
@@ -82,5 +88,15 @@ class DailyTasksScreen extends StatelessWidget {
     );
   }
 
-  
+  Widget _buildChatFAB() {
+    return Positioned(
+      bottom: 20,
+      left: 20, // ليكون في الجهة اليسرى كما في التصميم الأصلي (RTL)
+      child: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: const Color(0xFF0D47A1),
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+      ),
+    );
+  }
 }

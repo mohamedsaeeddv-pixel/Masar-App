@@ -17,14 +17,14 @@ class StatSmallCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)],
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.05), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: Colors.blue.withOpacity(0.05), shape: BoxShape.circle),
               child: Icon(icon, color: const Color(0xFF0D47A1), size: 20),
             ),
             const SizedBox(height: 8),
