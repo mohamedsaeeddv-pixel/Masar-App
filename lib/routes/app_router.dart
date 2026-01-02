@@ -6,7 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // --- Imports (Screens) ---
 import 'package:masar_app/features/add_client/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
-import 'package:masar_app/features/home/presentation/screens/customer_details_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/client_details_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/map_screen.dart';
 import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
 import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
@@ -28,7 +29,7 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     navigatorKey: parentNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/client-details',
     debugLogDiagnostics: true,
     routes: [
       // 1. Splash
@@ -98,9 +99,15 @@ class AppRouter {
       ),
 
       GoRoute(
-        path: '/customer-details',
-        name: AppRoutes.customerDetails,
-        builder: (context, state) => const CustomerDetailsScreen(),
+        path: '/client-details',
+        name: AppRoutes.clientDetails,
+        builder: (context, state) => const ClientDetailsScreen(),
+      ),
+
+       GoRoute(
+        path: '/map',
+        name: AppRoutes.map,
+        builder: (context, state) => const MapScreen(),
       ),
     ],
   );

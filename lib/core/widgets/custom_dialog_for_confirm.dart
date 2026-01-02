@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AppDialog extends StatelessWidget {
+class AppDialogForConfirm extends StatelessWidget {
   final String title;
   final String message;
   final VoidCallback onConfirm;
 
-  const AppDialog({
+  const AppDialogForConfirm({
     super.key,
     required this.title,
     required this.message,
@@ -33,14 +33,14 @@ class AppDialog extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    child: const Text('الفاء'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: onConfirm,
-                    child: const Text('Confirm'),
+                    child: const Text('موافق'),
                   ),
                 ),
               ],

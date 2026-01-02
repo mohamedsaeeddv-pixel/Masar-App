@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../manager/add_client_cubit.dart';
 import '../manager/add_client_state.dart';
-import '../../data/models/client_model.dart';
+import '../../../../core/shared_models/client_model.dart';
 
 import '../widgets/custom_client_text_field.dart';
 import '../widgets/custom_dropdown_field.dart';
@@ -157,7 +157,8 @@ class _AddClientScreenState extends State<AddClientScreen> {
         phone: _phoneController.text.trim(),
         activity: _activityController.text.trim(),
         classification: _selectedClassification ?? 'غير محدد',
-        type: _selectedType ?? 'غير محدد',
+        type: _selectedType ?? 'غير محدد', 
+        id: '', // سيتم تعيينه في المستودع عند الإضافة
       );
 
       context.read<AddClientCubit>().addClient(client);

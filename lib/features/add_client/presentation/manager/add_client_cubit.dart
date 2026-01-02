@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/client_model.dart';
+import '../../../../core/shared_models/client_model.dart';
 import '../../data/repos/add_client_repo.dart';
 import 'add_client_state.dart';
 

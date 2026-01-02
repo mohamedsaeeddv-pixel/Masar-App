@@ -5,9 +5,9 @@ class AppRoutes {
 
   // Home
   static const String home = 'home';
-  // ملحوظة: لو الـ Map و الـ CustomerDetails بيتفتحوا بـ push عادي برضه، شيلهم.
+  // ملحوظة: لو الـ Map و الـ ClientDetails بيتفتحوا بـ push عادي برضه، شيلهم.
   static const String map = 'map';
-  static const String customerDetails = 'customerDetails';
+  static const String clientDetails = 'clientDetails';
 
   // Profile
   static const String profile = 'profile';

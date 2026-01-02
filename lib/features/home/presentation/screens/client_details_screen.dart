@@ -2,17 +2,25 @@
 // Displays comprehensive information about a specific customer
 // including personal info, location, purchase history, and order actions
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/core/constants/app_styles.dart';
 import 'package:masar_app/core/constants/custom_app_bar.dart';
-import 'package:masar_app/core/widgets/custom_dialog.dart';
+import 'package:masar_app/core/utils/snack_bar_helper.dart';
+import 'package:masar_app/core/widgets/custom_dialog_for_confirm.dart';
+import 'package:masar_app/features/home/data/models/order_action_model.dart';
+import 'package:masar_app/features/home/data/repos/order_repo_imple.dart';
+import 'package:masar_app/features/home/presentation/manager/orders/cubit/order_cubit.dart';
+import 'package:masar_app/features/home/presentation/widgets/order_dialog.dart';
 import 'package:masar_app/features/home/presentation/widgets/product_items_section.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 
 /// Main screen widget for displaying detailed customer information
 /// Shows customer data, location, purchase stats, and available actions
-class CustomerDetailsScreen extends StatelessWidget {
-  const CustomerDetailsScreen({super.key});
+class ClientDetailsScreen extends StatelessWidget {
+  const ClientDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +34,7 @@ class CustomerDetailsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          children: const [
+          children: [
             // Distance indicator banner
             DistanceBanner(),
             // Customer basic information cards
@@ -81,7 +89,14 @@ class CustomerDetailsScreen extends StatelessWidget {
             // Ordered products list
             ProductsSection(status: "استرجاع"),
             // Action buttons for order management
-            ActionButtonsSection(),
+            BlocProvider<OrderCubit>(
+              create: (context) => OrderCubit(
+                repository: OrderRepositoryImpl(
+                  firestore: FirebaseFirestore.instance,
+                ),
+              ),
+              child: ActionButtonsSection(status: "استرجاع"),
+            ),
           ],
         ),
       ),
@@ -235,86 +250,170 @@ class LocationCard extends StatelessWidget {
 /// Section with action buttons for order management
 /// Provides buttons for: return, delivery confirmation, cancellation, and new order
 class ActionButtonsSection extends StatelessWidget {
-  const ActionButtonsSection({super.key});
+  const ActionButtonsSection({super.key, required this.status});
+
+  final String status;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
+    final agentId = context.read<AuthCubit>().state is AuthCubitAuthenticated
+    ? (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid
+    : 'UNKNOWN_AGENT';
+    return BlocConsumer<OrderCubit, OrderState>(
+      listener: (context, state) {
+        if (state is OrderSuccess) {
+          SnackBarHelper.showSuccess(context, message: state.message);
+        }
+
+        if (state is OrderFailure) {
+          SnackBarHelper.showError(context, message: state.error);
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is OrderLoading;
+
+        return Column(
           children: [
-            Expanded(
-              child: _actionBtn(
-                text: 'استرجاع',
-                color: AppColors.orange,
-                icon: Icons.undo,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: _actionBtn(
+                    isLoading: isLoading,
+                    text: 'استرجاع',
+                    color: AppColors.orange,
+                    icon: Icons.undo,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => OrderDialog(
+                          orderType: 'استرجاع منتجات',
+                          onConfirm: (products) {
+                            for (var p in products) {
+                              context.read<OrderCubit>().sendAction(
+                                OrderActionModel.returnOrder(
+                                  clientId: 'CLIENT_ID',
+                                  agentId: agentId,
+                                  productName: p.nameController.text,
+                                  productPrice:
+                                      double.tryParse(p.priceController.text) ??
+                                      0,
+                                  quantity:
+                                      int.tryParse(p.quantityController.text) ??
+                                      1,
+                                  notes: p.notesController.text.isEmpty
+                                      ? null
+                                      : p.notesController.text,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _actionBtn(
+                    isLoading: isLoading,
+                    text: status == 'تحصيل'
+                        ? 'تم تسليم الطلب'
+                        : 'تم استلام الطلب',
+                    color: AppColors.green,
+                    icon: Icons.check_circle,
+                    onPressed: () {
+                      context.read<OrderCubit>().sendAction(
+                        OrderActionModel.completeOrder(
+                          clientId: 'CLIENT_ID',
+                          agentId: agentId,
+                          delivered: status == 'تحصيل',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _actionBtn(
-                text: 'تم تسليم الطلب',
-                color: AppColors.green,
-                icon: Icons.check_circle,
-              ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _actionBtn(
+                    isLoading: isLoading,
+                    text: 'إلغاء الطلب',
+                    color: AppColors.red,
+                    icon: Icons.cancel,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AppDialogForConfirm(
+                          title: 'إلغاء الطلب',
+                          message: 'هل أنت متأكد من إلغاء هذا الطلب؟',
+                          onConfirm: () {
+                            Navigator.pop(context);
+
+                            context.read<OrderCubit>().sendAction(
+                              OrderActionModel.cancelOrder(
+                                clientId: 'CLIENT_ID',
+                                agentId: agentId,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _actionBtn(
+                    isLoading: isLoading,
+                    text: 'طلب جديد',
+                    color: AppColors.blue,
+                    icon: Icons.add,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => OrderDialog(
+                          orderType: 'طلب جديد',
+                          onConfirm: (products) {
+                            for (var p in products) {
+                              context.read<OrderCubit>().sendAction(
+                                OrderActionModel.newOrder(
+                                  clientId: 'CLIENT_ID',
+                                  agentId: agentId,
+                                  productName: p.nameController.text,
+                                  productPrice:
+                                      double.tryParse(p.priceController.text) ??
+                                      0,
+                                  quantity:
+                                      int.tryParse(p.quantityController.text) ??
+                                      1,
+                                  notes: p.notesController.text.isEmpty
+                                      ? null
+                                      : p.notesController.text,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _actionBtn(
-                text: 'إلغاء الطلب',
-                color: AppColors.red,
-                icon: Icons.cancel,
-                onPressed: (){
-                  showDialog(
-                    context: context,
-                    builder: (_) => AppDialog(
-                      title: 'Cancel Order',
-                      message: 'Are you sure you want to cancel this order?',
-                      onConfirm: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  );
-                }
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _actionBtn(
-                text: 'طلب جديد',
-                color: AppColors.blue,
-                icon: Icons.add,
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AppDialog(
-                      title: 'Delete Item',
-                      message: 'Are you sure you want to delete this item?',
-                      onConfirm: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
+        );
+      },
     );
   }
 
-  /// Helper method to build action buttons with consistent styling
-  /// @param text Button label text
-  /// @param color Button background color
   Widget _actionBtn({
     required String text,
     required Color color,
     required IconData icon,
+    required bool isLoading,
     VoidCallback? onPressed,
   }) {
     return ElevatedButton(
@@ -323,14 +422,24 @@ class ActionButtonsSection extends StatelessWidget {
         foregroundColor: AppColors.textOnPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      onPressed: onPressed,
-      child: Row(
-        children: [
-          Icon(icon, size: 16),
-          const SizedBox(width: 6),
-          Text(text, style: AppTextStyles.body14SemiBold),
-        ],
-      ),
+      onPressed: isLoading ? null : onPressed,
+      child: isLoading
+          ? const SizedBox(
+              height: 18,
+              width: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 16),
+                const SizedBox(width: 6),
+                Text(text, style: AppTextStyles.body14SemiBold),
+              ],
+            ),
     );
   }
 }
