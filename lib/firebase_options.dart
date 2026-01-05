@@ -4,16 +4,7 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -41,53 +32,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBZo0naK8i4mLbyHi6nCtP453cFSE6lQSo',
-    appId: '1:1050995001056:web:f79a26f3cf9908b5953285',
-    messagingSenderId: '1050995001056',
-    projectId: 'itiproject-ba6ab',
-    authDomain: 'itiproject-ba6ab.firebaseapp.com',
-    databaseURL: 'https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'itiproject-ba6ab.firebasestorage.app',
-    measurementId: 'G-FZCFS1X458',
+    apiKey: 'AIzaSyDu7U93_DNjksPTNnClmkABKV2d0bdo0Sw',
+    appId: '1:293999009610:web:6be2767f625cea5f782bb3',
+    messagingSenderId: '293999009610',
+    projectId: 'masar-spare',
+    authDomain: 'masar-spare.firebaseapp.com',
+    storageBucket: 'masar-spare.firebasestorage.app',
+    measurementId: 'G-WJDX3E0M1S',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD6yvp20I45uYf7myMg4Kxl0YihWwkRA4M',
-    appId: '1:1050995001056:android:3968095cd581c411953285',
-    messagingSenderId: '1050995001056',
-    projectId: 'itiproject-ba6ab',
-    databaseURL: 'https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'itiproject-ba6ab.firebasestorage.app',
+    apiKey: 'AIzaSyBFaSe4EkZWiO3TTW2usf0OHQ219c4KPh0',
+    appId: '1:293999009610:android:4943bb3373ea7ea2782bb3',
+    messagingSenderId: '293999009610',
+    projectId: 'masar-spare',
+    storageBucket: 'masar-spare.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAliZIbOMEm6L_aEPW4PYxaox_khZo3M_M',
-    appId: '1:1050995001056:ios:f37615fac608928a953285',
-    messagingSenderId: '1050995001056',
-    projectId: 'itiproject-ba6ab',
-    databaseURL: 'https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'itiproject-ba6ab.firebasestorage.app',
+    apiKey: 'AIzaSyB0Pe4TErERHjOlB6xidq7eLAfKYbmSUpg',
+    appId: '1:293999009610:ios:5f2c8edf6cb23de0782bb3',
+    messagingSenderId: '293999009610',
+    projectId: 'masar-spare',
+    storageBucket: 'masar-spare.firebasestorage.app',
     iosBundleId: 'com.example.masarApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAliZIbOMEm6L_aEPW4PYxaox_khZo3M_M',
-    appId: '1:1050995001056:ios:f37615fac608928a953285',
-    messagingSenderId: '1050995001056',
-    projectId: 'itiproject-ba6ab',
-    databaseURL: 'https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'itiproject-ba6ab.firebasestorage.app',
+    apiKey: 'AIzaSyB0Pe4TErERHjOlB6xidq7eLAfKYbmSUpg',
+    appId: '1:293999009610:ios:5f2c8edf6cb23de0782bb3',
+    messagingSenderId: '293999009610',
+    projectId: 'masar-spare',
+    storageBucket: 'masar-spare.firebasestorage.app',
     iosBundleId: 'com.example.masarApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBZo0naK8i4mLbyHi6nCtP453cFSE6lQSo',
-    appId: '1:1050995001056:web:763b97c087bce194953285',
-    messagingSenderId: '1050995001056',
-    projectId: 'itiproject-ba6ab',
-    authDomain: 'itiproject-ba6ab.firebaseapp.com',
-    databaseURL: 'https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'itiproject-ba6ab.firebasestorage.app',
-    measurementId: 'G-MJ8MT4G2CJ',
+    apiKey: 'AIzaSyDu7U93_DNjksPTNnClmkABKV2d0bdo0Sw',
+    appId: '1:293999009610:web:e25fb0e67e6ecf20782bb3',
+    messagingSenderId: '293999009610',
+    projectId: 'masar-spare',
+    authDomain: 'masar-spare.firebaseapp.com',
+    storageBucket: 'masar-spare.firebasestorage.app',
+    measurementId: 'G-4LCV6MXDHQ',
   );
+
 }

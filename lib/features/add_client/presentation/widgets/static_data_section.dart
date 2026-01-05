@@ -44,4 +44,5 @@ class StaticDataSection extends StatelessWidget {
       ),
     );
   }
+
 }

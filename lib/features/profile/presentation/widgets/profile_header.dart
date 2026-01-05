@@ -3,9 +3,14 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_styles.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final String name; // أضف هذا السطر
+  final String name;
+  final String role; // أضفنا الـ role هنا عشان تظهر تحت الاسم
 
-  const ProfileHeader({super.key, required this.name}); // اجعلها مطلوبة هنا
+  const ProfileHeader({
+    super.key,
+    required this.name,
+    this.role = "مندوب مبيعات", // قيمة افتراضية
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +30,18 @@ class ProfileHeader extends StatelessWidget {
               child: Container(
                 width: 16,
                 height: 16,
-                decoration: const BoxDecoration(color: AppColors.backgroundWhite, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  shape: BoxShape.circle,
+                ),
                 child: Center(
                   child: Container(
                     width: 10,
                     height: 10,
-                    decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ),
@@ -39,12 +50,13 @@ class ProfileHeader extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          name, // استخدم المتغير هنا بدل "محمد أحمد"
+          name,
           style: AppTextStyles.title20Bold.copyWith(color: AppColors.textPrimaryDark),
         ),
         const SizedBox(height: 4),
+        // استبدلنا الـ ID الثابت بالـ role اللي جاي من الداتا
         Text(
-          'ID: #88231', // ممكن تمرر الـ ID كمان بنفس الطريقة لو حبيت
+          role,
           style: AppTextStyles.body14Regular.copyWith(color: AppColors.textMutedGray),
         ),
       ],
