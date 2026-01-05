@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:masar_app/routes/app_routes.dart';
 // تأكد من صحة مسار استيراد ملف الـ core
 import '../../../../core/constants/app_colors.dart';
 
 class NavigationCard extends StatelessWidget {
-  const NavigationCard({super.key});
+      final int clientsLength;
+
+
+  const NavigationCard({super.key, required this.clientsLength});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +55,9 @@ class NavigationCard extends StatelessWidget {
             color: AppColors.chartCyan, // لون ثانوي من الـ Core
           ),
 
-          const Text(
-            '4 عملاء في انتظارك',
-            style: TextStyle(
+          Text(
+            '$clientsLength عملاء في انتظارك',
+            style: const TextStyle(
               color: AppColors.textMutedGray, // النص الرمادي الباهت
               fontSize: 14,
             ),
@@ -73,6 +78,10 @@ class NavigationCard extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () {
               // منطق فتح الخرائط
+
+              context.goNamed(
+                AppRoutes.clientDetails
+              );
             },
             icon: const Icon(Icons.near_me_outlined),
             label: const Text('بدء الملاحة'),

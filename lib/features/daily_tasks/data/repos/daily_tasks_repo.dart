@@ -1,10 +1,17 @@
 import 'package:dartz/dartz.dart';
-import '../models/task_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_and_customer_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_model.dart';
+import '../../../../core/errors/failures.dart';
 
-abstract class DailyTasksRepo {
-  // بنستخدم Stream عشان البيانات تتحدث تلقائياً أول ما تتغير في Firebase
-  Stream<List<TaskModel>> fetchTasks();
+abstract class TaskRepository {
+  Future<Either<Failure, List<TaskModel>>> getDailyTasks({
+    required String agentId,
+  });
 
-// ممكن تضيف دوال تانية مستقبلاً زي:
-// Future<Either<Failure, void>> completeTask(String taskId);
+  Future<Either<Failure, TaskModel>> getTaskById({
+    required String taskId,
+  });
+
+  Future<Either<Failure, List<TaskWithCustomer>>> getCustomerTasks({required String agentId});
+
 }

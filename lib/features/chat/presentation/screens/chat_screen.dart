@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:masar_app/core/constants/custom_app_bar.dart';
+import 'package:masar_app/core/widgets/custom_app_bar.dart';
 import 'package:masar_app/core/utils/app_validators.dart';
 import 'package:masar_app/core/widgets/failure_widget.dart';
 import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';

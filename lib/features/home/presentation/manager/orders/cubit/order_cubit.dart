@@ -8,27 +8,26 @@ class OrderCubit extends Cubit<OrderState> {
   final OrderRepository repository;
 
   OrderCubit({required this.repository}) : super(OrderInitial());
- Future<void> sendAction(OrderActionModel action) async {
-  emit(OrderLoading());
 
-  final result = await repository.sendOrderAction(action);
+  Future<void> sendAction(OrderActionModel action) async {
+    emit(OrderLoading());
 
-  result.fold(
-    (failure) {
-      emit(
-        OrderFailure(
-          error: failure.message,
-        ),
-      );
-    },
-    (_) {
-      emit(OrderSuccess(
-        message: action.type == OrderActionType.newOrder
-            ? 'تم تأكيد الطلب بنجاح'
-            : 'تم تأكيد الاسترجاع بنجاح',
-      ));
-    },
-  );
-}
+    final result = await repository.sendOrderAction(action);
 
+    result.fold(
+      (failure) => emit(OrderFailure(error: failure.message)),
+      (_) {
+        // الرسالة تختلف حسب نوع الطلب
+        final msg = switch (action.type) {
+          OrderActionType.newOrder => 'تم تأكيد الطلب بنجاح',
+          OrderActionType.returnOrder => 'تم تأكيد طلب الاسترجاع بنجاح',
+          OrderActionType.delivered => 'تم تأكيد تسليم الطلب بنجاح',
+          OrderActionType.cancelled => 'تم إلغاء الطلب بنجاح',
+          OrderActionType.received => 'تم تأكيد الاسترجاع  بنجاح',
+        };
+
+        emit(OrderSuccess(message: msg));
+      },
+    );
+  }
 }

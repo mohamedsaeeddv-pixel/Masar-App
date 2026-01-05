@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -57,9 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Index 2: شاشة المهام اليومية
     BlocProvider(
-      create: (context) => TasksCubit(DailyTasksRepoImpl())..getTasks(),
-      child: const DailyTasksScreen(),
-    ),
+  create: (context) {
+    final authState = context.read<AuthCubit>().state as AuthCubitAuthenticated;
+
+    return TasksCubit(
+      repository: TaskRepositoryImpl(
+        firestore: FirebaseFirestore.instance,
+      ),
+      agentId: authState.user.uid,
+    )..fetchCustomerTasks();
+  },
+  child: DailyTasksScreen(agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid),
+),
+
 
     // Index 3: شاشة الإعدادات الحقيقية (تم التعديل هنا) 👇
     const SettingsScreen(),

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class ProgressCard extends StatelessWidget {
-  const ProgressCard({super.key});
+        final int clientsLength;
+
+  const ProgressCard({super.key, required this.clientsLength});
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +53,10 @@ class ProgressCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10), // لمسة جمالية
           ),
           const SizedBox(height: 8),
-          const Align(
+           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '0/4 طلبات مكتملة',
+              '0/$clientsLength طلبات مكتملة',
               style: TextStyle(
                 fontSize: 12,
                 color: AppColors.textMutedGray, // النص الرمادي من الـ Core

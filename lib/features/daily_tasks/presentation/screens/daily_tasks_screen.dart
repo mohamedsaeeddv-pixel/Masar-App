@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:masar_app/features/daily_tasks/presentation/manager/tasks_state.dart';
 import '../manager/tasks_cubit.dart';
 import '../widgets/progress_card.dart';
 import '../widgets/navigation_card.dart';
 import '../widgets/task_item.dart';
 
 class DailyTasksScreen extends StatelessWidget {
-  const DailyTasksScreen({super.key});
+  final String agentId; // أضفنا id الوكيل هنا
+
+  const DailyTasksScreen({super.key, required this.agentId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
-      // إضافة AppBar ليعرف المستخدم في أي صفحة هو
       appBar: AppBar(
         backgroundColor: const Color(0xFF0D47A1),
         title: const Text(
@@ -25,7 +27,8 @@ class DailyTasksScreen extends StatelessWidget {
       body: Stack(
         children: [
           RefreshIndicator(
-            onRefresh: () async => context.read<TasksCubit>().getTasks(),
+            onRefresh: () async =>
+                context.read<TasksCubit>().fetchCustomerTasks(),
             child: BlocBuilder<TasksCubit, TasksState>(
               builder: (context, state) {
                 if (state is TasksLoading) {
@@ -39,36 +42,49 @@ class DailyTasksScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const ProgressCard(),
+                        ProgressCard(clientsLength: state.customerTasks.length),
                         const SizedBox(height: 16),
-                        const NavigationCard(),
+                        NavigationCard(clientsLength: state.customerTasks.length),
                         const SizedBox(height: 20),
                         const Text(
                           'المهام المعلقة',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 12),
-
-                        state.tasks.isEmpty
+                        state.customerTasks.isEmpty
                             ? _buildEmptyState()
                             : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: state.tasks.length,
-                          itemBuilder: (context, index) => TaskItem(task: state.tasks[index]),
-                        ),
-
-                        const SizedBox(height: 100), // مساحة للـ FAB
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.customerTasks.length,
+                                itemBuilder: (context, index) => TaskItem(
+                                  taskClient: state.customerTasks[index],
+                                  clientsName:
+                                      state.customerTasks[index].customer.name,
+                                ),
+                              ),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   );
                 }
+
+                if (state is TasksFailure) {
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
                 return const SizedBox();
               },
             ),
           ),
-          // إعادة زر المحادثة (FAB) في مكانه الصحيح
-          _buildChatFAB(),
         ],
       ),
     );
@@ -80,22 +96,21 @@ class DailyTasksScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 40),
-          Icon(Icons.assignment_turned_in_outlined, size: 80, color: Colors.grey[300]),
+          Icon(
+            Icons.assignment_turned_in_outlined,
+            size: 80,
+            color: Colors.grey[300],
+          ),
           const SizedBox(height: 16),
-          const Text("لا توجد مهام حالياً", style: TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.bold)),
+          const Text(
+            "لا توجد مهام حالياً",
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildChatFAB() {
-    return Positioned(
-      bottom: 20,
-      left: 20, // ليكون في الجهة اليسرى كما في التصميم الأصلي (RTL)
-      child: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF0D47A1),
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
       ),
     );
   }
