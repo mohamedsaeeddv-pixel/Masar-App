@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -6,7 +5,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../data/client_constants.dart';
 import '../manager/add_client_cubit.dart';
 import '../manager/add_client_state.dart';
-import '../../data/models/client_model.dart';
 
 // الـ Widgets المستوردة
 import '../widgets/custom_alerts.dart';
@@ -29,6 +27,7 @@ class AddClientScreen extends StatefulWidget {
 class _AddClientScreenState extends State<AddClientScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  // الـ Controllers الأساسية فقط
   final TextEditingController _latController = TextEditingController(text: "0");
   final TextEditingController _lngController = TextEditingController(text: "0");
   final TextEditingController _nameArController = TextEditingController();
@@ -38,10 +37,25 @@ class _AddClientScreenState extends State<AddClientScreen> {
   final TextEditingController _spentController = TextEditingController(text: "0");
   final TextEditingController _visitsController = TextEditingController(text: "1");
 
+  // المتغيرات الخاصة بالـ Dropdowns
   String? _selectedClassification;
   String? _selectedType;
   String? _selectedArea;
   String? _selectedActivityType;
+
+  @override
+  void dispose() {
+    // تنظيف الميموري - خطوة مهمة جداً
+    _nameArController.dispose();
+    _nameEnController.dispose();
+    _phoneController.dispose();
+    _activityController.dispose();
+    _spentController.dispose();
+    _visitsController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,12 +166,17 @@ class _AddClientScreenState extends State<AddClientScreen> {
     Position? position = await LocationService.getCurrentLocation();
 
     if (position != null) {
-      String? detectedArea = await LocationService.getAreaFromCoords(position.latitude, position.longitude);
+      String? detectedArea = await LocationService.getAreaFromCoords(
+          position.latitude,
+          position.longitude
+      );
+
       setState(() {
         _latController.text = position.latitude.toString();
         _lngController.text = position.longitude.toString();
         if (detectedArea != null) _selectedArea = detectedArea;
       });
+
       if (mounted) Navigator.pop(context);
       CustomAlerts.showSnackBar(context, detectedArea != null ? "تم تحديد المنطقة: $detectedArea" : "تم تحديد الموقع");
     } else {
@@ -172,21 +191,21 @@ class _AddClientScreenState extends State<AddClientScreen> {
         CustomAlerts.showSnackBar(context, "الرجاء التقاط الموقع أولاً", isError: true);
         return;
       }
-      final client = ClientModel(
-        name: _nameEnController.text.trim(),
-        nameAr: _nameArController.text.trim(),
-        phone: _phoneController.text.trim(),
-        activity: _activityController.text.trim(),
-        activityType: _selectedActivityType ?? "غير محدد",
-        area: _selectedArea ?? "غير محدد",
-        classification: _selectedClassification ?? 'A',
-        type: _selectedType ?? 'عميل جديد',
-        lastVisit: DateTime.now().toString().split(' ')[0],
-        totalSpent: int.tryParse(_spentController.text) ?? 0,
-        visitsCount: int.tryParse(_visitsController.text) ?? 1,
-        address: GeoPoint(double.parse(_latController.text), double.parse(_lngController.text)),
+
+      context.read<AddClientCubit>().saveClient(
+        nameEn: _nameEnController.text,
+        nameAr: _nameArController.text,
+        phone: _phoneController.text,
+        activity: _activityController.text,
+        activityType: _selectedActivityType,
+        area: _selectedArea,
+        classification: _selectedClassification,
+        type: _selectedType,
+        lat: _latController.text,
+        lng: _lngController.text,
+        spent: _spentController.text,
+        visits: _visitsController.text,
       );
-      context.read<AddClientCubit>().addClient(client);
     }
   }
 
