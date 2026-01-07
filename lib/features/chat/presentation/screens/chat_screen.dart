@@ -42,10 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     final text = _messageController.text.trim();
     if (text.isNotEmpty) {
-      context.read<ChatCubit>().sendMessage(
-        text,
-      );
-    
+      context.read<ChatCubit>().sendMessage(text);
     }
     FocusScope.of(context).unfocus(); // إغلاق الكيبورد
   }
@@ -55,8 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     if (bottomInset > 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {});
     }
 
     return SafeArea(
@@ -74,11 +70,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     return ListView.builder(
                       controller: _scrollController,
                       reverse: true,
-                      physics:const BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.all(8),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
-    final message = messages[messages.length - 1 - index]; // عكس ترتيب الرسائل
+                        final message =
+                            messages[messages.length -
+                                1 -
+                                index]; // عكس ترتيب الرسائل
                         final isSent = message.senderId == widget.currentUserId;
                         return ChatBubble(
                           message: message.content,
@@ -92,9 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: FailureWidget(
                         message: state.error,
                         onRetry: () {
-                          context.read<ChatCubit>().listenMessages(
-                            
-                          );
+                          context.read<ChatCubit>().listenMessages();
                         },
                       ),
                     );
@@ -115,7 +112,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         controller: _messageController,
                         decoration: const InputDecoration(
                           hintText: "اكتب رسالتك...",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(32)),),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(32)),
+                          ),
                         ),
                         validator: (value) => AppValidators.chatMessage(value),
                         onFieldSubmitted: (_) {

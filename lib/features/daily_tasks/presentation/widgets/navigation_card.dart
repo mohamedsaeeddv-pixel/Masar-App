@@ -80,7 +80,7 @@ class NavigationCard extends StatelessWidget {
               // منطق فتح الخرائط
 
               context.goNamed(
-                AppRoutes.clientDetails
+                AppRoutes.map
               );
             },
             icon: const Icon(Icons.near_me_outlined),
