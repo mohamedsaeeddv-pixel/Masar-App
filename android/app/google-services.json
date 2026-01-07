@@ -1,14 +1,13 @@
 {
   "project_info": {
-    "project_number": "1050995001056",
-    "firebase_url": "https://itiproject-ba6ab-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "itiproject-ba6ab",
-    "storage_bucket": "itiproject-ba6ab.firebasestorage.app"
+    "project_number": "293999009610",
+    "project_id": "masar-spare",
+    "storage_bucket": "masar-spare.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1050995001056:android:3968095cd581c411953285",
+        "mobilesdk_app_id": "1:293999009610:android:4943bb3373ea7ea2782bb3",
         "android_client_info": {
           "package_name": "com.example.masar_app"
         }
@@ -16,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD6yvp20I45uYf7myMg4Kxl0YihWwkRA4M"
+          "current_key": "AIzaSyBFaSe4EkZWiO3TTW2usf0OHQ219c4KPh0"
         }
       ],
       "services": {

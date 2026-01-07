@@ -16,7 +16,6 @@ class ProfileError extends ProfileState {
 }
 
 class ProfileCubit extends Cubit<ProfileState> {
-  // بنحقن الـ Repo هنا عشان الـ Cubit ميعرفش Firebase شغال إزاي (Clean Architecture)
   final ProfileRepo profileRepo;
 
   ProfileCubit(this.profileRepo) : super(ProfileInitial());
@@ -24,14 +23,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> getProfileData() async {
     emit(ProfileLoading());
 
-    // بننادي الـ Repo اللي بيروح للـ Firestore بالـ UID
-    final result = await profileRepo.getProfileData();
-
-    // هنا ممكن تستخدم Either (لو بتستخدم dartz) أو try-catch بسيطة
     try {
+      // لازم النداء يكون جوه الـ try عشان نمسك أي خطأ من الـ Repo
+      final result = await profileRepo.getProfileData();
       emit(ProfileSuccess(result));
     } catch (e) {
-      emit(ProfileError("فشل في تحميل البيانات"));
+      // إحنا بنبعت الـ e.toString() اللي جاية من الـ Repo (فيها "خطأ في جلب البيانات")
+      emit(ProfileError(e.toString()));
     }
   }
 }

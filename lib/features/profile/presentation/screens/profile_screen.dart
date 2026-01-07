@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                 padding: EdgeInsets.all(width * 0.04),
                 child: Column(
                   children: [
-                    ProfileHeader(name: user.name),
+                    ProfileHeader(name: user.nameAr), // استخدام nameAr من الـ Snapshot
                     SizedBox(height: height * 0.02),
                     Row(
                       children: [
@@ -65,11 +65,12 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(height: height * 0.025),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text('روابط سريعة', style: AppTextStyles.body16Bold.copyWith(color: AppColors.textPrimaryDark)),
+                      child: Text('روابط سريعة',
+                          style: AppTextStyles.body16Bold.copyWith(color: AppColors.textPrimaryDark)),
                     ),
                     SizedBox(height: height * 0.015),
 
-                    // --- الروابط السريعة (الـ Dashboard هنا) ---
+                    // --- الروابط السريعة ---
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -83,7 +84,6 @@ class ProfileScreen extends StatelessWidget {
                             iconBg: const Color(0xFFE3F2FD),
                             iconColor: AppColors.chartBlue,
                             onTap: () {
-                              // الانتقال المباشر باستخدام Navigator لمنع مشاكل الـ Context
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -98,7 +98,6 @@ class ProfileScreen extends StatelessWidget {
                             iconBg: const Color(0xFFE8F5E9),
                             iconColor: AppColors.chartCyan,
                             onTap: () {
-                              // الانتقال المباشر بدون الـ Router
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -113,12 +112,10 @@ class ProfileScreen extends StatelessWidget {
                             iconBg: const Color(0xFFFFF3E0),
                             iconColor: AppColors.chartAmber,
                             onTap: () {
-                              // الانتقال المباشر مع حقن الـ Provider يدوياً (نظام المطعم)
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider(
-                                    // بنجهز الطباخ (RepoImpl) والويتر (Cubit) قبل ما نفتح الشاشة
                                     create: (context) => DealsCubit(DealsRepoImpl())..getDeals(),
                                     child: const DealsScreen(),
                                   ),
@@ -131,7 +128,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
 
                     SizedBox(height: height * 0.025),
-                    _buildPersonalInfoSection(user),
+                    _buildPersonalInfoSection(user), // تمرير بيانات الـ Model
                     SizedBox(height: height * 0.04),
                     _buildLogoutButton(context, height),
                     SizedBox(height: height * 0.02),
@@ -150,7 +147,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // ميثود منفصلة للمعلومات الشخصية لتنظيم الكود
+  // ميثود المعلومات الشخصية - بدون عرض كود المستخدم (UserId)
   Widget _buildPersonalInfoSection(dynamic user) {
     return Column(
       children: [
@@ -160,7 +157,8 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const Icon(Icons.person_outline, color: AppColors.chartBlue),
             const SizedBox(width: 12),
-            Text('المعلومات الشخصية', style: AppTextStyles.body16Bold.copyWith(color: AppColors.textPrimaryDark)),
+            Text('المعلومات الشخصية',
+                style: AppTextStyles.body16Bold.copyWith(color: AppColors.textPrimaryDark)),
           ],
         ),
         const SizedBox(height: 12),
@@ -170,7 +168,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               InfoTile(title: 'البريد الإلكتروني', value: user.email, icon: Icons.email_outlined),
               InfoTile(title: 'رقم التليفون', value: user.phone, icon: Icons.phone_outlined),
-              InfoTile(title: 'المحافظة', value: user.location, icon: Icons.location_on_outlined),
+              InfoTile(title: 'الوظيفة', value: user.role, icon: Icons.work_outline),
             ],
           ),
         ),
@@ -178,7 +176,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // ميثود زر تسجيل الخروج
   Widget _buildLogoutButton(BuildContext context, double height) {
     return GestureDetector(
       onTap: () => _showLogoutDialog(context),
