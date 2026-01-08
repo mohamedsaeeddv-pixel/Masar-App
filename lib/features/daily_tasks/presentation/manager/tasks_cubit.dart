@@ -23,7 +23,7 @@ class TasksCubit extends Cubit<TasksState> {
         await repository.getDailyTasks(agentId: agentId);
 
     result.fold(
-      (failure) => emit(TasksFailure(failure.message)),
+      (failure) => emit(TasksFailure(failure.errorMessage)),
       (tasks) {
        
         emit(TasksSuccess(tasks: tasks));
@@ -39,7 +39,7 @@ class TasksCubit extends Cubit<TasksState> {
         await repository.getCustomerTasks(agentId: agentId);
 
     result.fold(
-      (failure) => emit(TasksFailure(failure.message)),
+      (failure) => emit(TasksFailure(failure.errorMessage)),
       (customerTasks) {
         // نحتفظ بالـ tasks الحالي لو موجود
         List<TaskModel> tasks = [];

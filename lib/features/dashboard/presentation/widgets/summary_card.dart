@@ -16,39 +16,38 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // الكلام كله يمين
-          children: [
-            Align(
-              alignment: Alignment.centerRight, // الأيقونة يمين
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: iconColor, size: 24),
+    // شيلنا الـ Expanded من هنا
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
               ),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
-            const SizedBox(height: 12),
-            Text(title, style: const TextStyle(color: Colors.grey, fontSize: 13), textAlign: TextAlign.right),
-            Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.right),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end, // السهم والنسبة يمين
-              children: [
-                Text(percent, style: TextStyle(color: iconColor, fontSize: 12, fontWeight: FontWeight.bold)),
-                Icon(Icons.trending_up, color: iconColor, size: 14),
-              ],
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 13), textAlign: TextAlign.right),
+          Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.right),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(percent, style: TextStyle(color: iconColor, fontSize: 12, fontWeight: FontWeight.bold)),
+              Icon(Icons.trending_up, color: iconColor, size: 14),
+            ],
+          ),
+        ],
       ),
     );
   }

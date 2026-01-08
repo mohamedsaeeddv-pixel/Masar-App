@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:masar_app/features/login/data/repos/auth_repo_impl.dart';
+import '../../../dashboard/data/repos/dashboard_repo.dart';
+import '../../../dashboard/presentation/manager/dashboard_cubit.dart';
 import '../../../dashboard/presentation/screens/dashboard_screen.dart';
 import '../../../deals/data/repos/deals_repo_impl.dart';
 import '../../../deals/presentation/manager/deals_cubit.dart';
@@ -78,6 +80,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
+// داخل MenuItem الخاص بلوحة التحكم في profile_screen.dart
                           MenuItem(
                             title: 'لوحة التحكم',
                             icon: Icons.dashboard_outlined,
@@ -87,7 +90,11 @@ class ProfileScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const DashboardScreen(),
+                                  builder: (context) => BlocProvider(
+                                    // هنا بنوفر الـ Cubit والـ Repo للشاشة
+                                    create: (context) => DashboardCubit(DashboardRepo()),
+                                    child: const DashboardScreen(),
+                                  ),
                                 ),
                               );
                             },

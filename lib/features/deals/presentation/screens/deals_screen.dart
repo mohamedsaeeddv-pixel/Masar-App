@@ -11,6 +11,7 @@ class DealsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text("الصفقات", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: const Color(0xFF1A56BE),

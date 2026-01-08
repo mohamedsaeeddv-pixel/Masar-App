@@ -15,7 +15,7 @@ class OrderCubit extends Cubit<OrderState> {
     final result = await repository.sendOrderAction(action);
 
     result.fold(
-      (failure) => emit(OrderFailure(error: failure.message)),
+      (failure) => emit(OrderFailure(error: failure.errorMessage)),
       (_) {
         // الرسالة تختلف حسب نوع الطلب
         final msg = switch (action.type) {

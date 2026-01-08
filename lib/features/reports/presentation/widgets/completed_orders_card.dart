@@ -12,7 +12,9 @@ class CompletedOrdersCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1. حساب النسبة المئوية الحقيقية
     double progress = total > 0 ? (completed / total) : 0;
+    int percentage = (progress * 100).toInt(); // تحويلها لرقم صحيح (مثلاً 5 بدل 0.05)
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -38,28 +40,29 @@ class CompletedOrdersCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                '5% ↗',
-                style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
+              // 2. عرض النسبة الحقيقية بدل الـ 5% الثابتة
+              Text(
+                '$percentage% ↗',
+                style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    '/$total',
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade400, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
                     '$completed',
                     style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF0D47A1)),
+                  ),
+                  Text(
+                    '/$total',
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade400, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 12),
-          // شريط التقدم (اللون الأزرق الداكن)
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
@@ -71,7 +74,7 @@ class CompletedOrdersCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
                 'متبقي ${total - completed} طلبات للوصول للوجهة',

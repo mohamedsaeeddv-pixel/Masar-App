@@ -33,7 +33,7 @@ class TaskRepositoryImpl implements TaskRepository {
     } catch (e) {
       return const Left(
         FirebaseFailure(
-          message: 'حدث خطأ غير متوقع أثناء تحميل المهام',
+          errorMessage: 'حدث خطأ غير متوقع أثناء تحميل المهام',
         ),
       );
     }
@@ -50,7 +50,7 @@ class TaskRepositoryImpl implements TaskRepository {
       if (!doc.exists) {
         return const Left(
           FirebaseFailure(
-            message: 'المهمة غير موجودة',
+            errorMessage: 'المهمة غير موجودة',
             code: 'not-found',
           ),
         );
@@ -62,7 +62,7 @@ class TaskRepositoryImpl implements TaskRepository {
     } catch (e) {
       return const Left(
         FirebaseFailure(
-          message: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
+          errorMessage: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
         ),
       );
     }
@@ -92,7 +92,7 @@ Future<Either<Failure, List<TaskWithCustomer>>> getCustomerTasks({required Strin
     return Left(FirebaseFailure.fromException(e));
   } catch (e) {
     return const Left(FirebaseFailure(
-      message: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
+      errorMessage: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
     ));
   }
 }

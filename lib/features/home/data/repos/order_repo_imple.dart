@@ -43,7 +43,7 @@ class OrderRepositoryImpl implements OrderRepository {
     } on FirebaseException catch (e) {
       return Left(FirebaseFailure.fromException(e));
     } catch (e) {
-      return const Left(FirebaseFailure(message: 'حدث خطأ غير متوقع'));
+      return const Left(FirebaseFailure(errorMessage: 'حدث خطأ غير متوقع'));
     }
   }
 }

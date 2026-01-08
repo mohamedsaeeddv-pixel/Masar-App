@@ -21,7 +21,7 @@ class AuthRepoImpl implements AuthRepo {
       final user = result.user;
       if (user == null) {
         return left(const FirebaseAuthFailure(
-          message: 'فشل تسجيل الدخول',
+          errorMessage: 'فشل تسجيل الدخول',
           code: 'user-null',
         ));
       }
@@ -30,7 +30,7 @@ class AuthRepoImpl implements AuthRepo {
     } on FirebaseAuthException catch (e) {
       return left(FirebaseAuthFailure.fromAuthException(e));
     } catch (e) {
-      return left(FirebaseAuthFailure(message: e.toString()));
+      return left(FirebaseAuthFailure(errorMessage: e.toString()));
     }
   }
 
@@ -39,7 +39,7 @@ class AuthRepoImpl implements AuthRepo {
     try {
       return right(_auth.currentUser != null);
     } catch (e) {
-      return left(FirebaseAuthFailure(message: e.toString()));
+      return left(FirebaseAuthFailure(errorMessage: e.toString()));
     }
   }
 
@@ -49,7 +49,7 @@ class AuthRepoImpl implements AuthRepo {
       await _auth.signOut();
       return right(null);
     } catch (e) {
-      return left(FirebaseAuthFailure(message: e.toString()));
+      return left(FirebaseAuthFailure(errorMessage: e.toString()));
     }
   }
 

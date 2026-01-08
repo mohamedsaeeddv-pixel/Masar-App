@@ -1,78 +1,52 @@
 import 'package:flutter/material.dart';
 
+// داخل widgets/order_status_card.dart
 class OrderStatusCard extends StatelessWidget {
-  const OrderStatusCard({super.key});
+  final double deliveredPercent;
+  final double returnedPercent;
+  final double failedPercent;
+
+  const OrderStatusCard({
+    super.key,
+    required this.deliveredPercent,
+    required this.returnedPercent,
+    required this.failedPercent,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('حالة الطلبات', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("حالة الطلبات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // 1. الدائرة (يسار بالنسبة للنص العربي)
+              // الرسم البياني الملون
+              SizedBox(
+                height: 100,
+                width: 100,
+                child: CustomPaint(
+                  painter: MultiColorPieChartPainter(
+                    delivered: deliveredPercent,
+                    returned: returnedPercent,
+                    failed: failedPercent,
+                  ),
+                ),
+              ),
+              // الليستة الجانبية
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildLegend('تم التوصيل', '75%', const Color(0xFF2196F3)),
-                  _buildLegend('راجع', '15%', Colors.orange),
-                  _buildLegend('فشل', '10%', Colors.redAccent),
+                  _buildStatusItem("تم التوصيل", deliveredPercent, const Color(0xFF0D47A1)),
+                  _buildStatusItem("راجع", returnedPercent, Colors.orange),
+                  _buildStatusItem("فشل", failedPercent, Colors.red),
                 ],
               ),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    height: 110,
-                    width: 110,
-                    child: CircularProgressIndicator(
-                      value: 1.0, // دايرة كاملة
-                      strokeWidth: 18,
-                      color: Colors.grey.withOpacity(0.1),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 110,
-                    width: 110,
-                    child: CircularProgressIndicator(
-                      value: 0.75,
-                      strokeWidth: 18,
-                      color: const Color(0xFF0D47A1), // الأزرق الغامق
-                    ),
-                  ),
-                  Transform.rotate(
-                    angle: (2 * 3.14159) * 0.75, // لف البداية لتبدأ من نهاية الـ 75%
-                    child: SizedBox(
-                      height: 110,
-                      width: 110,
-                      child: CircularProgressIndicator(
-                        value: 0.15,
-                        strokeWidth: 18,
-                        color: Colors.orange, // البرتقالي
-                      ),
-                    ),
-                  ),
-                  Transform.rotate(
-                    angle: (2 * 3.14159) * 0.90, // لف البداية لتبدأ من نهاية الـ 90%
-                    child: SizedBox(
-                      height: 110,
-                      width: 110,
-                      child: CircularProgressIndicator(
-                        value: 0.10,
-                        strokeWidth: 18,
-                        color: Colors.redAccent, // الأحمر
-                      ),
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ],
@@ -80,23 +54,61 @@ class OrderStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLegend(String label, String val, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              Text(val, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        ],
-      ),
+  Widget _buildStatusItem(String label, double value, Color color) {
+    return Row(
+      children: [
+        Icon(Icons.circle, size: 10, color: color),
+        const SizedBox(width: 8),
+        Text("$label: ", style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        Text("${value.toInt()}%", style: const TextStyle(fontWeight: FontWeight.bold)),
+      ],
     );
   }
+}
+
+class MultiColorPieChartPainter extends CustomPainter {
+  final double delivered, returned, failed;
+  MultiColorPieChartPainter({required this.delivered, required this.returned, required this.failed});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double strokeWidth = 15;
+    Rect rect = Offset.zero & size;
+
+    Paint backgroundPaint = Paint()
+      ..color = Colors.grey[300]!
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawArc(rect, 0, 6.28, false, backgroundPaint);
+
+    // 2. رسم الأجزاء الملونة فوق الرصاصي
+    Paint paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    double startAngle = -1.57;
+
+    if (delivered > 0) {
+      canvas.drawArc(rect, startAngle, (delivered / 100) * 6.28, false,
+          paint..color = const Color(0xFF0D47A1));
+      startAngle += (delivered / 100) * 6.28;
+    }
+
+    if (returned > 0) {
+      canvas.drawArc(rect, startAngle, (returned / 100) * 6.28, false,
+          paint..color = Colors.orange);
+      startAngle += (returned / 100) * 6.28;
+    }
+
+    if (failed > 0) {
+      canvas.drawArc(rect, startAngle, (failed / 100) * 6.28, false,
+          paint..color = Colors.red);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

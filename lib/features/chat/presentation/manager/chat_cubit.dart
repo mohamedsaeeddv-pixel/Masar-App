@@ -29,7 +29,7 @@ class ChatCubit extends Cubit<ChatState> {
     _messagesSubscription = repo.listenMessages(chatId).listen(
       (either) {
         either.fold(
-          (failure) => emit(ChatError(failure.message)),
+          (failure) => emit(ChatError(failure.errorMessage)),
           (messages) => emit(ChatSuccess(messages)),
         );
       },
@@ -44,7 +44,7 @@ class ChatCubit extends Cubit<ChatState> {
     );
 
     result.fold(
-      (failure) => emit(ChatError(failure.message)),
+      (failure) => emit(ChatError(failure.errorMessage)),
       (_) {},
     );
   }

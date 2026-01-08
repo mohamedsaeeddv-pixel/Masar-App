@@ -1,15 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/deal_model.dart';
 import 'deals_repo.dart';
 
 class DealsRepoImpl implements DealsRepo {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
-  Future<List<DealModel>> fetchDeals() async {
-    await Future.delayed(const Duration(milliseconds: 800)); // محاكاة الشبكة
-    return [
-      DealModel(dealId: "DL-4829", customerId: "CUST-99281", customerName: "أحمد محمد", amount: "350 جنيه", status: "تم التوصيل", location: "المعادي، القاهرة", phone: "01012345678"),
-      DealModel(dealId: "DL-4832", customerId: "CUST-45182", customerName: "", amount: "0", status: "قيد الانتظار", location: "", phone: ""),
-      DealModel(dealId: "DL-4810", customerId: "CUST-77392", customerName: "سارة حسن", amount: "280 جنيه", status: "تم التوصيل", location: "مدينة نصر، القاهرة", phone: "01098765432"),
-      DealModel(dealId: "DL-4890", customerId: "CUST-88934", customerName: "", amount: "0", status: "فشل", location: "", phone: ""),
-    ];
+  Stream<List<DealModel>> fetchDeals() {
+    String uid = _auth.currentUser?.uid ?? '';
+
+    return _firestore
+        .collection('representative')
+        .doc(uid)
+        .collection('orders')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+
+        String rawStatus = data['status'] ?? 'assigned';
+        String displayStatus;
+
+        if (rawStatus == 'completed') {
+          displayStatus = 'تمت';
+        } else if (rawStatus == 'assigned') {
+          displayStatus = 'قيد الانتظار';
+        } else if (rawStatus == 'failed') {
+          displayStatus = 'فشل';
+        } else {
+          displayStatus = rawStatus;
+        }
+
+        return DealModel(
+          dealId: doc.id,
+          customerId: data['customerId'] ?? 'CUST-0000',
+          customerName: data['customerName'] ?? 'غير معروف',
+          // المبلغ يظهر بالجنيه كما في التصميم
+          amount: "${data['totalPrice'] ?? 0} جنيه",
+          status: displayStatus,
+          location: data['address'] ?? 'القاهرة',
+          phone: data['phone'] ?? '',
+        );
+      }).toList();
+    });
   }
 }

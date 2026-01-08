@@ -35,7 +35,7 @@ class ProductsRepositoryImpl implements ProductsRepository {
 
         return Left<Failure, List<ProductModel>>(
           const FirebaseFailure(
-            message: 'حدث خطأ غير متوقع',
+            errorMessage: 'حدث خطأ غير متوقع',
           ),
         );
       });
@@ -44,7 +44,7 @@ class ProductsRepositoryImpl implements ProductsRepository {
     } catch (e) {
       yield const Left(
         FirebaseFailure(
-          message: 'حدث خطأ غير متوقع',
+          errorMessage: 'حدث خطأ غير متوقع',
         ),
       );
     }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_and_customer_model.dart';
-// استيراد الـ Core
 import '../../../../core/constants/app_colors.dart';
 
 class TaskItem extends StatelessWidget {
@@ -10,7 +9,6 @@ class TaskItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // تحديد اللون بناءً على نوع المهمة باستخدام ألوان الـ Core
     Color statusColor = taskClient?.task.taskType == "return"
         
         ? AppColors.amberAccent: AppColors.cyanSecondary;
