@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart'; // <-- for date formatting
 import 'package:masar_app/core/widgets/custom_app_bar.dart';
 import 'package:masar_app/core/utils/app_validators.dart';
 import 'package:masar_app/core/widgets/failure_widget.dart';
@@ -43,6 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _messageController.text.trim();
     if (text.isNotEmpty) {
       context.read<ChatCubit>().sendMessage(text);
+      _messageController.clear();
     }
     FocusScope.of(context).unfocus(); // إغلاق الكيبورد
   }
@@ -75,14 +77,40 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message =
-                            messages[messages.length -
-                                1 -
-                                index]; // عكس ترتيب الرسائل
+                            messages[messages.length - 1 - index]; // عكس ترتيب الرسائل
                         final isSent = message.senderId == widget.currentUserId;
-                        return ChatBubble(
-                          message: message.content,
-                          isSent: isSent,
-                          timestamp: message.timestamp,
+
+                        // Determine if we need to show the date
+                        bool showDate = false;
+                        if (index == messages.length - 1) {
+                          showDate = true; // always show for the first message
+                        } else {
+                          final previousMessage =
+                              messages[messages.length - 1 - (index + 1)];
+                          showDate = !isSameDate(
+                              message.timestamp, previousMessage.timestamp);
+                        }
+
+                        return Column(
+                          children: [
+                            if (showDate)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  DateFormat.yMMMMd().format(message.timestamp),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ChatBubble(
+                              message: message.content,
+                              isSent: isSent,
+                              timestamp: message.timestamp,
+                            ),
+                          ],
                         );
                       },
                     );
@@ -113,10 +141,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         decoration: const InputDecoration(
                           hintText: "اكتب رسالتك...",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32)),
                           ),
                         ),
-                        validator: (value) => AppValidators.chatMessage(value),
+                        validator: (value) =>
+                            AppValidators.chatMessage(value),
                         onFieldSubmitted: (_) {
                           if (_formKey.currentState!.validate()) {
                             _sendMessage();
@@ -141,5 +171,12 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  // Helper function to check if two timestamps are on the same day
+  bool isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 }

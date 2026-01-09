@@ -12,8 +12,7 @@ class ChatCubit extends Cubit<ChatState> {
   final String chatId;
   final String currentUserId;
 
-  StreamSubscription<Either<Failure, List<ChatModel>>>?
-      _messagesSubscription;
+  StreamSubscription<Either<Failure, List<ChatModel>>>? _messagesSubscription;
 
   ChatCubit({
     required this.repo,
@@ -24,29 +23,21 @@ class ChatCubit extends Cubit<ChatState> {
   void listenMessages() {
     _messagesSubscription?.cancel();
 
-    emit(ChatLoading());
-
-    _messagesSubscription = repo.listenMessages(chatId).listen(
-      (either) {
-        either.fold(
-          (failure) => emit(ChatError(failure.message)),
-          (messages) => emit(ChatSuccess(messages)),
-        );
-      },
-    );
+    if (state is ChatSuccess) {
+      emit(ChatLoading());
+    }
+    _messagesSubscription = repo.listenMessages(chatId).listen((either) {
+      either.fold(
+        (failure) => emit(ChatError(failure.message)),
+        (messages) => emit(ChatSuccess(messages)),
+      );
+    });
   }
 
   Future<void> sendMessage(String content) async {
-    final result = await repo.sendMessage(
-      chatId,
-      currentUserId,
-      content,
-    );
+    final result = await repo.sendMessage(chatId, currentUserId, content);
 
-    result.fold(
-      (failure) => emit(ChatError(failure.message)),
-      (_) {},
-    );
+    result.fold((failure) => emit(ChatError(failure.message)), (_) {});
   }
 
   @override

@@ -44,10 +44,7 @@ class AppRouter {
         path: '/login',
         name: AppRoutes.login,
         builder: (context, state) => LoginScreen(),
-        //  BlocProvider(
-        //   create: (context) => LoginCubit(LoginRepoImpl()),
-        //   child: const LoginScreen(),
-        // ),
+       
       ),
 
       // 3. Home (مغلف بالـ Provider بتاع الـ Navbar)
@@ -79,24 +76,28 @@ class AppRouter {
 
       // 6. Chat (مغلف بالـ Provider والبيانات المطلوبة)
       GoRoute(
-        path: '/chat',
-        name: AppRoutes.chat,
-        builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>;
+  path: '/chat/:agentId',
+  name: AppRoutes.chat,
+  builder: (context, state) {
+    final agentId = state.pathParameters['agentId']!;
+    final currentUserId = state.extra as String;
 
-          final chatId = data['chatId'] as String;
-          final currentUserId = data['currentUserId'] as String;
-
-          return BlocProvider(
-            create: (_) => ChatCubit(
-              repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
-              chatId: chatId,
-              currentUserId: currentUserId,
-            )..listenMessages(),
-            child: ChatScreen(chatId: chatId, currentUserId: currentUserId),
-          );
-        },
+    return BlocProvider(
+      create: (_) => ChatCubit(
+        repo: ChatsRepoImpl(
+          firestore: FirebaseFirestore.instance,
+        ),
+        chatId: agentId, // chatId == agentId
+        currentUserId: currentUserId,
+      )..listenMessages(),
+      child: ChatScreen(
+        chatId: agentId,
+        currentUserId: currentUserId,
       ),
+    );
+  },
+),
+
 
       GoRoute(
         path: '/client-details',

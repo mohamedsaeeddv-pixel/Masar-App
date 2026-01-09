@@ -58,19 +58,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Index 2: شاشة المهام اليومية
     BlocProvider(
-  create: (context) {
-    final authState = context.read<AuthCubit>().state as AuthCubitAuthenticated;
+      create: (context) {
+        final authState =
+            context.read<AuthCubit>().state as AuthCubitAuthenticated;
 
-    return TasksCubit(
-      repository: TaskRepositoryImpl(
-        firestore: FirebaseFirestore.instance,
+        return TasksCubit(
+          repository: TaskRepositoryImpl(firestore: FirebaseFirestore.instance),
+          agentId: authState.user.uid,
+        )..fetchCustomerTasks();
+      },
+      child: DailyTasksScreen(
+        agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated)
+            .user
+            .uid,
       ),
-      agentId: authState.user.uid,
-    )..fetchCustomerTasks();
-  },
-  child: DailyTasksScreen(agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid),
-),
-
+    ),
 
     // Index 3: شاشة الإعدادات الحقيقية (تم التعديل هنا) 👇
     const SettingsScreen(),
@@ -100,16 +102,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           floatingActionButton: CustomChatBtn(
             onPressed: () {
+              final currentUserId =
+                  (context.read<AuthCubit>().state as AuthCubitAuthenticated)
+                      .user
+                      .uid;
               context.pushNamed(
                 AppRoutes.chat,
-                extra: {
-                  'chatId': 'chat_001',
-                  'currentUserId':
-                      (context.read<AuthCubit>().state
-                              as AuthCubitAuthenticated)
-                          .user
-                          .uid,
+                pathParameters: {
+                  'agentId': currentUserId, // أو agentId الحقيقي
                 },
+                extra: currentUserId,
               );
             },
           ),

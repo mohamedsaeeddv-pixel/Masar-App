@@ -3,9 +3,14 @@ import 'package:masar_app/core/errors/failures.dart';
 import '../models/chats_model.dart';
 
 abstract class ChatsRepo {
-  // الاستماع للرسائل real-time مع Either للأخطاء
+  /// Listen to messages for a specific chat
+  /// chatId = agentId
   Stream<Either<Failure, List<ChatModel>>> listenMessages(String chatId);
 
-  // إرسال رسالة جديدة مع Either للأخطاء
-  Future<Either<Failure, void>> sendMessage(String chatId, String senderId, String content);
+  /// Send message to a specific chat
+  Future<Either<Failure, void>> sendMessage(
+    String chatId,
+    String senderId,
+    String content,
+  );
 }
