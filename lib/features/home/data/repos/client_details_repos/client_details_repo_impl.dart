@@ -27,7 +27,7 @@ class ClientDetailsRepositoryImpl implements ClientDetailsRepository {
         return left(
        
           const FirebaseFailure(
-            message: 'البيانات غير موجودة',
+            errorMessage: 'البيانات غير موجودة',
             code: 'not-found',
           ),
         );
@@ -43,7 +43,7 @@ class ClientDetailsRepositoryImpl implements ClientDetailsRepository {
     } catch (e) {
       return left(
         const FirebaseFailure(
-          message: 'حدث خطأ غير متوقع',
+          errorMessage: 'حدث خطأ غير متوقع',
         ),
       );
     }

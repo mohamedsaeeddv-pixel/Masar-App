@@ -62,7 +62,7 @@ class ChatsRepoImpl implements ChatsRepo {
       if (e.code == 'permission-denied') {
         return Left(
           FirebaseFailure(
-            message: 'ليس لديك صلاحية لإرسال رسالة في هذا الشات',
+            errorMessage: 'ليس لديك صلاحية لإرسال رسالة في هذا الشات',
           ),
         );
       }

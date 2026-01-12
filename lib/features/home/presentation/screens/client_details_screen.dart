@@ -81,7 +81,7 @@ class ClientDetailsView extends StatelessWidget {
       body: BlocConsumer<ClientDetailsCubit, ClientDetailsState>(
         listener: (context, state) {
           if (state is ClientDetailsFailure) {
-            SnackBarHelper.showError(context, message: state.failure.message);
+            SnackBarHelper.showError(context, message: state.failure.errorMessage);
           }
         },
         builder: (context, state) {
@@ -91,7 +91,7 @@ class ClientDetailsView extends StatelessWidget {
           if (state is ClientDetailsFailure) {
             return Center(
               child: Text(
-                'حدث خطأ: ${state.failure.message}',
+                'حدث خطأ: ${state.failure.errorMessage}',
                 style: AppTextStyles.body16Bold.copyWith(color: AppColors.red),
               ),
             );
