@@ -19,7 +19,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
         await authRepo.login(email: email, password: password);
 
     result.fold(
-      (failure) => emit(AuthCubitError(failure.message)),
+      (failure) => emit(AuthCubitError(failure.errorMessage)),
       (user) => emit(AuthCubitAuthenticated(user)),
     );
   }
@@ -31,7 +31,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     final Either<Failure, void> result = await authRepo.logout();
 
     result.fold(
-      (failure) => emit(AuthCubitError(failure.message)),
+      (failure) => emit(AuthCubitError(failure.errorMessage)),
       (_) => emit(AuthCubitUnauthenticated()),
     );
   }
@@ -43,7 +43,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     final Either<Failure, bool> result = await authRepo.isLoggedIn();
 
     result.fold(
-      (failure) => emit(AuthCubitError(failure.message)),
+      (failure) => emit(AuthCubitError(failure.errorMessage)),
       (isLoggedIn) {
         if (isLoggedIn) {
           // Optional: you can fetch the UserModel from cache or Firebase here

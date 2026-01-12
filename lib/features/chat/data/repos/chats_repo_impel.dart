@@ -32,7 +32,7 @@ class ChatsRepoImpl implements ChatsRepo {
         yield Left(FirebaseFailure.fromException(e));
       }
     } catch (e) {
-      yield Left(FirebaseFailure(message: e.toString()));
+      yield Left(FirebaseFailure(errorMessage: e.toString()));
     }
   }
 
@@ -68,7 +68,7 @@ class ChatsRepoImpl implements ChatsRepo {
       }
       return Left(FirebaseFailure.fromException(e));
     } catch (e) {
-      return Left(FirebaseFailure(message: e.toString()));
+      return Left(FirebaseFailure(errorMessage: e.toString()));
     }
   }
 }

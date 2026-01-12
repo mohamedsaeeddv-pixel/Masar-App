@@ -19,7 +19,7 @@ class ProductsCubit extends Cubit<ProductsState> {
       (either) {
         either.fold(
           (failure) => emit(
-            ProductsFailure(failure.message),
+            ProductsFailure(failure.errorMessage),
           ),
           (products) => emit(
             ProductsSuccess(products),

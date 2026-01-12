@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
 
 class WeeklyPerformanceCard extends StatelessWidget {
-  const WeeklyPerformanceCard({super.key});
+  final int weeklyTasks;
+
+  const WeeklyPerformanceCard({super.key, required this.weeklyTasks});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الأداء الأسبوعي', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const Text('طلب مكتمل', style: TextStyle(color: Colors.grey, fontSize: 12)),
-          const Text('55', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          const Text("الأداء الأسبوعي",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text("طلب مكتمل",
+              style: TextStyle(color: Colors.grey, fontSize: 14)),
           const SizedBox(height: 10),
-          // تمثيل الرسم البياني الخطي كما في الصورة
+          Text(
+              "$weeklyTasks",
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)
+          ),
+          const SizedBox(height: 20),
+
+          // إضافة الرسم البياني الخطي (الـ Graph) الذي اختفى
           SizedBox(
-            height: 120,
+            height: 60,
             width: double.infinity,
-            child: CustomPaint(painter: _ChartPainter()),
+            child: CustomPaint(
+              painter: LineChartPainter(),
+            ),
           ),
         ],
       ),
@@ -28,18 +48,28 @@ class WeeklyPerformanceCard extends StatelessWidget {
   }
 }
 
-class _ChartPainter extends CustomPainter {
+// كود رسم الخط المتعرج الأزرق
+class LineChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFF0D47A1)..strokeWidth = 3..style = PaintingStyle.stroke;
-    final path = Path();
+    Paint paint = Paint()
+      ..color = const Color(0xFF1E63EE) // نفس لون السيم العام
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    Path path = Path();
+    // إحداثيات تقريبية لرسم الخط المتعرج كما في الصورة
     path.moveTo(0, size.height * 0.7);
-    path.lineTo(size.width * 0.2, size.height * 0.4);
+    path.lineTo(size.width * 0.2, size.height * 0.3);
     path.lineTo(size.width * 0.4, size.height * 0.6);
-    path.lineTo(size.width * 0.7, size.height * 0.3);
+    path.lineTo(size.width * 0.6, size.height * 0.2);
+    path.lineTo(size.width * 0.8, size.height * 0.4);
     path.lineTo(size.width, size.height * 0.5);
+
     canvas.drawPath(path, paint);
   }
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

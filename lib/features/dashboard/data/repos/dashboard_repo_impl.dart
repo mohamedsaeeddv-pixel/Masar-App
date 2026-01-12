@@ -8,7 +8,7 @@ class DashboardRepo {
 
   Stream<DashboardModel> getDashboardData() {
     String uid = _auth.currentUser?.uid ?? '';
-    String name = _auth.currentUser?.displayName ?? "محمد المندوب";
+    String name = _auth.currentUser?.displayName ?? "محمد";
 
     return _firestore
         .collection('representative')
@@ -17,22 +17,28 @@ class DashboardRepo {
         .snapshots()
         .map((snapshot) {
 
-      // 1. حساب الأرقام الأساسية من الداتا الحقيقية
+      // 1. إجمالي الطلبات
       int total = snapshot.docs.length;
+
+      // 2. الطلبات المكتملة
       int delivered = snapshot.docs.where((doc) => doc.data()['status'] == 'completed').length;
+
+      // 3. الطلبات الراجعة (لو عندك status اسمه returned)
       int returned = snapshot.docs.where((doc) => doc.data()['status'] == 'returned').length;
+
+      // 4. الطلبات الفاشلة (لو عندك status اسمه failed)
       int failed = snapshot.docs.where((doc) => doc.data()['status'] == 'failed').length;
 
-      // 2. حساب النسب المئوية للشارت (لو الإجمالي 0 بنحط 0 عشان ميحصلش Error قسمة)
+      // حساب النسب المئوية ديناميكياً
       double deliveredP = total > 0 ? (delivered / total) * 100 : 0;
       double returnedP = total > 0 ? (returned / total) * 100 : 0;
       double failedP = total > 0 ? (failed / total) * 100 : 0;
 
       return DashboardModel(
         userName: name,
-        receivedOrders: total, // الـ 12 في الصورة
-        deliveredOrders: delivered, // الـ 9 في الصورة
-        weeklyCompletedTasks: delivered, // خليها مرتبطة بالمنفذ حالياً
+        receivedOrders: total,
+        deliveredOrders: delivered,
+        weeklyCompletedTasks: delivered, // أو احسبها بناءً على تاريخ الأسبوع
         deliveredPercent: deliveredP,
         returnedPercent: returnedP,
         failedPercent: failedP,

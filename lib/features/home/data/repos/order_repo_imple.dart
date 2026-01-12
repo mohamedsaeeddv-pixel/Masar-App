@@ -16,7 +16,7 @@ class OrderRepositoryImpl implements OrderRepository {
   Future<Either<Failure, Unit>> addNewOrder(TaskModel task) async {
     try {
       if (task.id.isEmpty) {
-        return Left(FirebaseFailure(message: 'معرف الطلب فارغ'));
+        return Left(FirebaseFailure(errorMessage: 'معرف الطلب فارغ'));
       }
 
       final newOrderRef =
@@ -34,7 +34,7 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(FirebaseFailure.fromException(e));
     } catch (e) {
       return Left(
-        FirebaseFailure(message: 'حدث خطأ غير متوقع : $e'),
+        FirebaseFailure(errorMessage: 'حدث خطأ غير متوقع : $e'),
       );
     }
   }
@@ -49,13 +49,13 @@ class OrderRepositoryImpl implements OrderRepository {
   ) async {
     try {
       if (task.id.isEmpty) {
-        return Left(FirebaseFailure(message: 'معرف الطلب فارغ'));
+        return Left(FirebaseFailure(errorMessage: 'معرف الطلب فارغ'));
       }
 
       if (task.representativeId == null ||
           task.representativeId!.isEmpty) {
         return Left(
-          FirebaseFailure(message: 'معرف المندوب غير موجود'),
+          FirebaseFailure(errorMessage: 'معرف المندوب غير موجود'),
         );
       }
 
@@ -88,7 +88,7 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(FirebaseFailure.fromException(e));
     } catch (e) {
       return Left(
-        FirebaseFailure(message: 'حدث خطأ غير متوقع : $e'),
+        FirebaseFailure(errorMessage: 'حدث خطأ غير متوقع : $e'),
       );
     }
   }

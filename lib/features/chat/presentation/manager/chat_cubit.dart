@@ -28,7 +28,7 @@ class ChatCubit extends Cubit<ChatState> {
     }
     _messagesSubscription = repo.listenMessages(chatId).listen((either) {
       either.fold(
-        (failure) => emit(ChatError(failure.message)),
+        (failure) => emit(ChatError(failure.errorMessage)),
         (messages) => emit(ChatSuccess(messages)),
       );
     });
@@ -37,7 +37,7 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> sendMessage(String content) async {
     final result = await repo.sendMessage(chatId, currentUserId, content);
 
-    result.fold((failure) => emit(ChatError(failure.message)), (_) {});
+    result.fold((failure) => emit(ChatError(failure.errorMessage)), (_) {});
   }
 
   @override

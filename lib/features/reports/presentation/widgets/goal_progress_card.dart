@@ -16,20 +16,18 @@ class GoalProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // حسابات آمنة لضمان عدم حدوث خطأ في التقسيم أو عرض علامة X
     double ordersProgress = (total > 0) ? (completed / total) : 0.0;
     double salesProgress = (salesGoal > 0) ? (sales / salesGoal) : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E63EE), // اللون الأزرق الزاهي طبقاً للصورة
+        color: const Color(0xFF1E63EE), // اللون الأزرق الزاهي
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // العنوان العلوي مع الأيقونة
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -47,7 +45,6 @@ class GoalProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 25),
 
-          // قسم عدد الطلبات
           _buildProgressRow(
             label: 'عدد الطلبات',
             current: completed.toString(),
@@ -59,7 +56,6 @@ class GoalProgressCard extends StatelessWidget {
 
           const SizedBox(height: 25),
 
-          // قسم قيمة المبيعات
           _buildProgressRow(
             label: 'قيمة المبيعات',
             current: sales.toInt().toString(),
@@ -71,7 +67,6 @@ class GoalProgressCard extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // شريط المعلومات السفلي (متبقي X للوصول للهدف)
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
             decoration: BoxDecoration(
@@ -103,7 +98,6 @@ class GoalProgressCard extends StatelessWidget {
     required Color color,
     required String unit,
   }) {
-    // التأكد أن القيمة بين 0 و 1 لضمان استقرار الواجهة
     final double safeProgress = progress.clamp(0.0, 1.0);
 
     return Column(
@@ -114,7 +108,7 @@ class GoalProgressCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // كبسولة النسبة المئوية
+            // كبسولة النسبة المئوية على اليسار
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
@@ -130,23 +124,43 @@ class GoalProgressCard extends StatelessWidget {
                 ),
               ),
             ),
-            // عرض القيمة الحالية والمستهدفة
+            // عرض القيمة الحالية والمستهدفة بترتيب يمين لليسار (RTL)
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
+                // الرقم الحالي (مثل 2 أو 563) يظهر أولاً من اليمين
+                Text(
+                  current,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                // الرقم المستهدف (مثل /400) يظهر بعده
+                Text(
+                  '/$target',
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 16
+                  ),
+                ),
+                // العملة تظهر في النهاية
                 if (unit.isNotEmpty)
-                  Text(unit, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                Text('/$target',
-                    style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16)),
-                Text(current,
-                    style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Text(
+                        unit,
+                        style: const TextStyle(color: Colors.white, fontSize: 14)
+                    ),
+                  ),
               ],
             ),
           ],
         ),
         const SizedBox(height: 12),
-        // شريط التقدم بتصميم دائري الأطراف
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(

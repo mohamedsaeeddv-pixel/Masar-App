@@ -24,7 +24,7 @@ class TasksCubit extends Cubit<TasksState> {
         );
 
     result.fold(
-      (failure) => emit(TasksFailure(failure.message)),
+      (failure) => emit(TasksFailure(failure.errorMessage)),
       (tasks) => emit(TasksSuccess(tasks)),
     );
   }

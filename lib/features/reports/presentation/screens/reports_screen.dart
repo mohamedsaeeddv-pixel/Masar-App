@@ -6,7 +6,7 @@ import '../manager/reports_state.dart';
 import '../widgets/goal_progress_card.dart';
 import '../widgets/period_selector.dart';
 import '../widgets/stat_small_card.dart';
-import '../widgets/completed_orders_card.dart'; // تأكد من استيراد الويدجت الجديدة
+import '../widgets/completed_orders_card.dart';
 
 class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
@@ -14,6 +14,7 @@ class ReportsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+      // تأكد إن ReportsRepoImpl بياخد المعاملات الصح لو فيه Dependency Injection
       create: (context) => ReportsCubit(ReportsRepoImpl())..fetchReports('يومي'),
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F6F8),
@@ -28,7 +29,6 @@ class ReportsScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        // زر الشات العائم مع إشعار
         floatingActionButton: Stack(
           alignment: Alignment.topRight,
           children: [
@@ -51,6 +51,7 @@ class ReportsScreen extends StatelessWidget {
             if (state is ReportsLoading) {
               return const Center(child: CircularProgressIndicator());
             }
+
             if (state is ReportsSuccess) {
               final data = state.reportsModel;
               return SingleChildScrollView(
@@ -69,38 +70,42 @@ class ReportsScreen extends StatelessWidget {
                     // 1. الكارت الأزرق (الهدف)
                     GoalProgressCard(
                       completed: data.completedOrders,
-                      total: data.totalOrders,
+                      // تعديل: استخدمنا totalOrdersGoal عشان ده اللي في الموديل
+                      total: data.totalOrdersGoal,
                       sales: data.salesAmount,
                       salesGoal: data.totalSalesGoal,
                       period: data.reportPeriod,
                     ),
                     const SizedBox(height: 20),
-                    // نص توضيحي للإنجاز
                     const Text('الإنجاز: اليومي',
                         style: TextStyle(color: Colors.grey, fontSize: 12)),
                     const SizedBox(height: 8),
-                    // 2. الكارت المفقود (الطلبات المكتملة)
+                    // 2. الكارت (الطلبات المكتملة)
                     CompletedOrdersCard(
                       completed: data.completedOrders,
-                      total: data.totalOrders,
+                      total: data.totalOrdersGoal, // تعديل هنا كمان
                     ),
                     const SizedBox(height: 16),
-                    // 3. الكروت الصغيرة (المبالغ والمسافة)
+                    // 3. الكروت الصغيرة
                     Row(
                       textDirection: TextDirection.rtl,
                       children: [
-                        StatSmallCard(
-                            title: 'المبالغ المحصلة عليها',
-                            value: '${data.salesAmount.toInt()} جنيه',
-                            percent: '10%+',
-                            icon: Icons.account_balance_wallet_outlined
+                        Expanded( // ضفت Expanded عشان الكروت متضربش Pixel Overflow
+                          child: StatSmallCard(
+                              title: 'المبالغ المحصلة',
+                              value: '${data.salesAmount.toInt()} جنيه',
+                              percent: '10%+',
+                              icon: Icons.account_balance_wallet_outlined
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        StatSmallCard(
-                            title: 'المسافة',
-                            value: '${data.distanceKm.toInt()} كم',
-                            percent: '5%+',
-                            icon: Icons.directions_car_filled_outlined
+                        Expanded(
+                          child: StatSmallCard(
+                              title: 'المسافة',
+                              value: '${data.distanceKm.toInt()} كم',
+                              percent: '5%+',
+                              icon: Icons.directions_car_filled_outlined
+                          ),
                         ),
                       ],
                     ),
@@ -108,9 +113,12 @@ class ReportsScreen extends StatelessWidget {
                 ),
               );
             }
-            if (state is ReportsError) {
-              return Center(child: Text(state.message));
+
+            // تعديل: غيرنا لـ ReportsFailure واستخدمنا errorMessage وش نظافة
+            if (state is ReportsFailure) {
+              return Center(child: Text(state.errMessage, style: const TextStyle(color: Colors.red)));
             }
+
             return const Center(child: Text('جاري تهيئة البيانات...'));
           },
         ),

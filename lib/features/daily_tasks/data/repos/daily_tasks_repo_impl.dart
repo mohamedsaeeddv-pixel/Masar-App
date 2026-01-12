@@ -42,7 +42,7 @@ class TaskRepositoryImpl implements TaskRepository {
     // 🔴 Any unexpected error
     catch (e) {
       debugPrint('FirebaseException: ${e.toString()}');
-      return const Left(FirebaseFailure(message: 'حدث خطأ غير متوقع'));
+      return const Left(FirebaseFailure(errorMessage: 'حدث خطأ غير متوقع'));
     }
   }
 
@@ -61,7 +61,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
       if (!doc.exists) {
         return const Left(
-          FirebaseFailure(message: 'الطلب غير موجود', code: 'not-found'),
+          FirebaseFailure(errorMessage: 'الطلب غير موجود', code: 'not-found'),
         );
       }
 
@@ -73,7 +73,7 @@ class TaskRepositoryImpl implements TaskRepository {
     }
     // 🔴 Any unexpected error
     catch (e) {
-      return const Left(FirebaseFailure(message: 'حدث خطأ غير متوقع'));
+      return const Left(FirebaseFailure(errorMessage: 'حدث خطأ غير متوقع'));
     }
   }
 }

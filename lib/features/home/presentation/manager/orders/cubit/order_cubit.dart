@@ -15,7 +15,7 @@ class OrderCubit extends Cubit<OrderState> {
     final result = await repository.updateOrderStatus(task, newStatus);
 
     result.fold(
-      (failure) => emit(OrderFailure(error: failure.message)),
+      (failure) => emit(OrderFailure(error: failure.errorMessage)),
       (_) => emit(OrderSuccess(message: _successMessage(newStatus))),
     );
   }
@@ -26,7 +26,7 @@ Future<void> addNewOrder(TaskModel task) async {
   final result = await repository.addNewOrder(task);
 
   result.fold(
-    (failure) => emit(OrderFailure(error: failure.message)),
+    (failure) => emit(OrderFailure(error: failure.errorMessage)),
     (_) => emit(const OrderSuccess(message: 'تم إنشاء الطلب بنجاح')),
   );
 }
