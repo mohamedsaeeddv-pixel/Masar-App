@@ -5,24 +5,56 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:masar_app/core/constants/app_colors.dart';
 import 'package:masar_app/core/constants/app_styles.dart';
 import 'package:masar_app/core/widgets/custom_app_bar.dart';
 import 'package:masar_app/core/utils/snack_bar_helper.dart';
 import 'package:masar_app/core/widgets/custom_dialog_for_confirm.dart';
-import 'package:masar_app/features/home/data/models/order_action_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_type_model.dart';
+import 'package:masar_app/features/home/data/repos/client_details_repos/client_details_repo_impl.dart';
 import 'package:masar_app/features/home/data/repos/order_repo_imple.dart';
 import 'package:masar_app/features/home/data/repos/product_repo_imple.dart';
+import 'package:masar_app/features/home/presentation/manager/clients_details/cubit/client_details_cubit.dart';
 import 'package:masar_app/features/home/presentation/manager/orders/cubit/order_cubit.dart';
-import 'package:masar_app/features/home/presentation/manager/product/cubit/products_cubit.dart';
 import 'package:masar_app/features/home/presentation/widgets/order_dialog.dart';
 import 'package:masar_app/features/home/presentation/widgets/product_items_section.dart';
 import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
+import 'package:masar_app/routes/app_routes.dart';
 
 /// Main screen widget for displaying detailed customer information
 /// Shows customer data, location, purchase stats, and available actions
 class ClientDetailsScreen extends StatelessWidget {
-  const ClientDetailsScreen({super.key});
+  final String clientId;
+  final TaskModel task;
+  final List<TaskModel> tasks;
+
+  const ClientDetailsScreen({
+    super.key,
+    required this.clientId,
+    required this.task,
+    required this.tasks,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ClientDetailsCubit(
+        clientRepository: ClientDetailsRepositoryImpl(
+          firestore: FirebaseFirestore.instance,
+        ),
+      )..getClientDetails(clientId),
+      child: ClientDetailsView(task: task, tasks: tasks),
+    );
+  }
+}
+
+class ClientDetailsView extends StatelessWidget {
+  final TaskModel task;
+  final List<TaskModel> tasks;
+
+  const ClientDetailsView({super.key, required this.task, required this.tasks});
 
   @override
   Widget build(BuildContext context) {
@@ -30,80 +62,112 @@ class ClientDetailsScreen extends StatelessWidget {
       // Custom app bar with title and edit action
       appBar: CustomAppBar(
         title: "تفاصيل العميل",
-        leading: IconButton(
-          icon: Icon(Icons.edit_outlined),
-          onPressed: () {},
-        ),
+        // leading: IconButton(icon: Icon(Icons.edit_outlined), onPressed: () {}),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24,
+              color: AppColors.bluePrimaryDark,
+            ),
+            onPressed: () {
+              // Navigate to edit client screen
+              context.pushNamed(AppRoutes.home);
+            },
+          ),
+        ],
       ),
       // Scrollable body containing all customer information sections
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Distance indicator banner
-            DistanceBanner(),
-            // Customer basic information cards
-            InfoCard(
-              title: 'اسم العميل',
-              value: 'أحمد محمد',
-              icon: Icons.person,
-            ),
-            InfoCard(
-              title: 'رقم التليفون',
-              value: '01234567890',
-              icon: Icons.phone,
-            ),
-            InfoCard(
-              title: 'تاريخ آخر زيارة',
-              value: '2024-01-10',
-              icon: Icons.calendar_today,
-            ),
-            InfoCard(
-              title: 'اشترى آخر مرة بكام',
-              value: '180 جنيه',
-              icon: Icons.attach_money,
-            ),
-            // Customer location details
-            LocationCard(),
-            // Business type information
-            InfoCard(
-              title: 'نوع النشاط التجاري',
-              value: 'مطعم',
-              icon: Icons.store,
-            ),
-            // Purchase statistics
-            InfoCard(
-              title: 'إحصائيات الشراء',
-              value: '165 جنيه\nإجمالي 12 عملية شراء',
-              icon: Icons.trending_up,
-            ),
-            // Customer rating
-            InfoCard(
-              isRating: true,
-              title: 'التصنيف',
-              value: 'ممتاز-A',
-              icon: Icons.sell_outlined,
-            ),
-            // Client classification
-            InfoCard(
-              title: 'نوع العميل',
-              value: 'جملة الجملة',
-              icon: Icons.group,
-            ),
-            // Current visit reason
-            // Ordered products list
-            ProductsSection(status: "استرجاع"),
-            // Action buttons for order management
-            BlocProvider<OrderCubit>(
-              create: (context) => OrderCubit(
-                repository: OrderRepositoryImpl(
-                  firestore: FirebaseFirestore.instance,
-                ),
+      body: BlocConsumer<ClientDetailsCubit, ClientDetailsState>(
+        listener: (context, state) {
+          if (state is ClientDetailsFailure) {
+            SnackBarHelper.showError(context, message: state.failure.message);
+          }
+        },
+        builder: (context, state) {
+          if (state is ClientDetailsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is ClientDetailsFailure) {
+            return Center(
+              child: Text(
+                'حدث خطأ: ${state.failure.message}',
+                style: AppTextStyles.body16Bold.copyWith(color: AppColors.red),
               ),
-              child: ActionButtonsSection(status: "استرجاع"),
-            ),
-          ],
-        ),
+            );
+          }
+
+          if (state is ClientDetailsSuccess) {
+            final client = state.client;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Distance indicator banner
+                  DistanceBanner(),
+                  // Customer basic information cards
+                  InfoCard(
+                    title: 'اسم العميل',
+                    value: client.nameAr,
+                    icon: Icons.person,
+                  ),
+                  InfoCard(
+                    title: 'رقم التليفون',
+                    value: client.phone,
+                    icon: Icons.phone,
+                  ),
+                  InfoCard(
+                    title: 'تاريخ آخر زيارة',
+                    value: client.lastVisit,
+                    icon: Icons.calendar_today,
+                  ),
+                  InfoCard(
+                    title: 'اشترى آخر مرة بكام',
+                    value: '${client.totalSpent} جنيه',
+                    icon: Icons.attach_money,
+                  ),
+                  // Customer location details
+                  LocationCard(latlng: client.address ?? GeoPoint(0, 0)),
+                  // Business type information
+                  InfoCard(
+                    title: 'نوع النشاط التجاري',
+                    value: client.activity,
+                    icon: Icons.store,
+                  ),
+
+                  // Customer rating
+                  InfoCard(
+                    isRating: true,
+                    title: 'التصنيف',
+                    value: client.classification,
+                    icon: Icons.sell_outlined,
+                  ),
+                  // Client classification
+                  InfoCard(
+                    title: 'نوع العميل',
+                    value: client.activityType,
+                    icon: Icons.group,
+                  ),
+                  // Current visit reason
+                  // Ordered products list
+                  ProductsSection(task: task),
+                  // Action buttons for order management
+                  BlocProvider<OrderCubit>(
+                    create: (context) => OrderCubit(
+                      repository: OrderRepositoryImpl(
+                        firestore: FirebaseFirestore.instance,
+                      ),
+                    ),
+                    child: ActionButtonsSection(task: task, tasks: tasks),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Default case: return empty container
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -180,11 +244,15 @@ class InfoCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   margin: const EdgeInsets.only(right: 6, left: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.green,
+                    color: value == 'A'
+                        ? AppColors.green
+                        : value == 'B'
+                        ? AppColors.sidebarPrimary
+                        : AppColors.chartAmber,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'A',
+                    value,
                     style: AppTextStyles.body16Bold.copyWith(
                       color: AppColors.textOnPrimary,
                     ),
@@ -208,10 +276,13 @@ class InfoCard extends StatelessWidget {
 /// Card widget displaying customer's location details
 /// Shows address and GPS coordinates
 class LocationCard extends StatelessWidget {
-  const LocationCard({super.key});
+  final GeoPoint latlng;
+  const LocationCard({super.key, required this.latlng});
 
   @override
   Widget build(BuildContext context) {
+    final lat = latlng.latitude;
+    final lng = latlng.longitude;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       color: AppColors.cardBackground,
@@ -233,14 +304,14 @@ class LocationCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
+            // Text(
+            //   '15 شارع طلعت حرب، وسط البلد، القاهرة',
+            //   style: AppTextStyles.body14Regular.copyWith(
+            //     color: AppColors.textPrimaryDark,
+            //   ),
+            // ),
             Text(
-              '15 شارع طلعت حرب، وسط البلد، القاهرة',
-              style: AppTextStyles.body14Regular.copyWith(
-                color: AppColors.textPrimaryDark,
-              ),
-            ),
-            Text(
-              '30.044400 , 31.235700',
+              '${lat.toStringAsFixed(6)}, ${lng.toStringAsFixed(6)}',
               style: AppTextStyles.body14Regular.copyWith(
                 color: AppColors.grayText,
               ),
@@ -254,23 +325,36 @@ class LocationCard extends StatelessWidget {
 
 /// Section with action buttons for order management
 /// Provides buttons for: return, delivery confirmation, cancellation, and new order
-class ActionButtonsSection extends StatelessWidget {
-  const ActionButtonsSection({super.key, required this.status});
+class ActionButtonsSection extends StatefulWidget {
+  const ActionButtonsSection({
+    super.key,
+    required this.task,
+    required this.tasks,
+  });
 
-  final String status;
+  final TaskModel task;
+  final List<TaskModel> tasks;
+
+  @override
+  State<ActionButtonsSection> createState() => _ActionButtonsSectionState();
+}
+
+class _ActionButtonsSectionState extends State<ActionButtonsSection> {
+  final Map<String, bool> _buttonDisabled = {};
 
   @override
   Widget build(BuildContext context) {
     final agentId = context.read<AuthCubit>().state is AuthCubitAuthenticated
         ? (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid
         : 'UNKNOWN_AGENT';
+
     return BlocConsumer<OrderCubit, OrderState>(
       listener: (context, state) {
         if (state is OrderLoading) {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => const Dialog(
+            builder: (_) => const Dialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
               child: Center(child: CircularProgressIndicator()),
@@ -279,17 +363,18 @@ class ActionButtonsSection extends StatelessWidget {
         }
 
         if (state is OrderSuccess) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-    Navigator.of(context, rootNavigator: true).pop();
-    SnackBarHelper.showSuccess(context, message: state.message);
-  });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context, rootNavigator: true).pop();
+            SnackBarHelper.showSuccess(context, message: state.message);
+          });
         }
 
         if (state is OrderFailure) {
-         WidgetsBinding.instance.addPostFrameCallback((_) {
-    Navigator.of(context, rootNavigator: true).pop();
-    SnackBarHelper.showError(context, message: state.error);
-  });}
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context, rootNavigator: true).pop();
+            SnackBarHelper.showError(context, message: state.error);
+          });
+        }
       },
       builder: (context, state) {
         final isLoading = state is OrderLoading;
@@ -298,6 +383,7 @@ class ActionButtonsSection extends StatelessWidget {
           children: [
             Row(
               children: [
+                // زر الاسترجاع
                 Expanded(
                   child: _actionBtn(
                     isLoading: isLoading,
@@ -312,26 +398,46 @@ class ActionButtonsSection extends StatelessWidget {
                           repository: ProductsRepositoryImpl(
                             firestore: FirebaseFirestore.instance,
                           ),
-                          orderType: 'استرجاع منتجات',
+                          orderType: 'طلب استرجاع منتج',
                           onConfirm: (products) {
-                            for (var p in products) {
-                              context.read<OrderCubit>().sendAction(
-                                OrderActionModel.returnOrder(
-                                  clientId: 'CLIENT_ID',
-                                  agentId: agentId,
-                                  productName: p.selectedProduct!.nameAr,
-                                  productPrice:
-                                      double.tryParse(p.priceController.text) ??
-                                      0,
-                                  quantity:
-                                      int.tryParse(p.quantityController.text) ??
-                                      1,
-                                  notes: p.notesController.text.isEmpty
-                                      ? null
-                                      : p.notesController.text,
-                                ),
-                              );
-                            }
+                            final newTask = TaskModel(
+                              id: FirebaseFirestore.instance
+                                  .collection('new_order')
+                                  .doc()
+                                  .id,
+                              area: widget.task.area,
+                              client: widget.task.client,
+                              products: products
+                                  .map((p) => p.toTaskProduct())
+                                  .toList(),
+                              taskType: TaskTypeModel(
+                                key: 'return',
+                                label: 'طلب استرجاع',
+                              ),
+                              totalPrice: products
+                                  .fold(
+                                    0.0,
+                                    (sum, p) =>
+                                        sum +
+                                        (double.tryParse(
+                                                  p.priceController.text,
+                                                ) ??
+                                                0) *
+                                            (int.tryParse(
+                                                  p.quantityController.text,
+                                                ) ??
+                                                1),
+                                  )
+                                  .toInt(),
+                              createdAt: DateTime.now(),
+                              representativeId: agentId,
+                              status: TaskStatus.assigned,
+                            );
+
+                            context.read<OrderCubit>().addNewOrder(newTask);
+
+                            // ارجع للـ home بعد الاسترجاع
+                            context.goNamed(AppRoutes.home);
                           },
                         ),
                       );
@@ -339,22 +445,34 @@ class ActionButtonsSection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
+                // زر الاستلام / التسليم
                 Expanded(
                   child: _actionBtn(
-                    isLoading: isLoading,
-                    text: status == 'تحصيل'
+                    isLoading:
+                        isLoading || (_buttonDisabled[widget.task.id] ?? false),
+                    text: widget.task.taskType.label == 'تحصيل'
                         ? 'تم تسليم الطلب'
                         : 'تم استلام الطلب',
                     color: AppColors.green,
                     icon: Icons.check_circle,
                     onPressed: () {
-                      debugPrint('Complete Order Pressed  $agentId');
+                      final newStatus = widget.task.taskType.label == 'تحصيل'
+                          ? TaskStatus.delivered
+                          : TaskStatus.received;
+
+                      final updatedTask = widget.task.copyWith(
+                        status: newStatus,
+                        updatedAt: DateTime.now(),
+                      );
+
+                      // قفل الزر بعد الضغط
+                      setState(() {
+                        _buttonDisabled[widget.task.id] = true;
+                      });
+
                       context.read<OrderCubit>().sendAction(
-                        OrderActionModel.completeOrder(
-                          clientId: 'CLIENT_ID',
-                          agentId: agentId,
-                          delivered: status == 'تحصيل',
-                        ),
+                        updatedTask,
+                        newStatus,
                       );
                     },
                   ),
@@ -364,6 +482,7 @@ class ActionButtonsSection extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
+                // زر إلغاء الطلب
                 Expanded(
                   child: _actionBtn(
                     isLoading: isLoading,
@@ -371,7 +490,6 @@ class ActionButtonsSection extends StatelessWidget {
                     color: AppColors.red,
                     icon: Icons.cancel,
                     onPressed: () {
-                      final cubit = context.read<OrderCubit>();
                       showDialog(
                         context: context,
                         builder: (_) => AppDialogForConfirm(
@@ -380,12 +498,22 @@ class ActionButtonsSection extends StatelessWidget {
                           onConfirm: () {
                             Navigator.pop(context);
 
-                            cubit.sendAction(
-                              OrderActionModel.cancelOrder(
-                                clientId: 'CLIENT_ID',
-                                agentId: agentId,
-                              ),
+                            final updatedTask = widget.task.copyWith(
+                              status: TaskStatus.cancelled,
+                              updatedAt: DateTime.now(),
                             );
+                            // قفل الزر بعد الضغط
+                            setState(() {
+                              _buttonDisabled[widget.task.id] = true;
+                            });
+
+                            context.read<OrderCubit>().sendAction(
+                              updatedTask,
+                              TaskStatus.cancelled,
+                            );
+
+                            // ارجع للـ home بعد الإلغاء
+                            context.goNamed(AppRoutes.home);
                           },
                         ),
                       );
@@ -393,6 +521,7 @@ class ActionButtonsSection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
+                // زر طلب جديد
                 Expanded(
                   child: _actionBtn(
                     isLoading: isLoading,
@@ -409,24 +538,44 @@ class ActionButtonsSection extends StatelessWidget {
                           ),
                           orderType: 'طلب جديد',
                           onConfirm: (products) {
-                            for (var p in products) {
-                              context.read<OrderCubit>().sendAction(
-                                OrderActionModel.newOrder(
-                                  clientId: 'CLIENT_ID',
-                                  agentId: agentId,
-                                  productName: p.selectedProduct!.nameAr,
-                                  productPrice:
-                                      double.tryParse(p.priceController.text) ??
-                                      0,
-                                  quantity:
-                                      int.tryParse(p.quantityController.text) ??
-                                      1,
-                                  notes: p.notesController.text.isEmpty
-                                      ? null
-                                      : p.notesController.text,
-                                ),
-                              );
-                            }
+                            final newTask = TaskModel(
+                              id: FirebaseFirestore.instance
+                                  .collection('new_order')
+                                  .doc()
+                                  .id,
+                              area: widget.task.area,
+                              client: widget.task.client,
+                              products: products
+                                  .map((p) => p.toTaskProduct())
+                                  .toList(),
+                              taskType: TaskTypeModel(
+                                key: 'new',
+                                label: 'طلب جديد',
+                              ),
+                              totalPrice: products
+                                  .fold(
+                                    0.0,
+                                    (sum, p) =>
+                                        sum +
+                                        (double.tryParse(
+                                                  p.priceController.text,
+                                                ) ??
+                                                0) *
+                                            (int.tryParse(
+                                                  p.quantityController.text,
+                                                ) ??
+                                                1),
+                                  )
+                                  .toInt(),
+                              createdAt: DateTime.now(),
+                              representativeId: agentId,
+                              status: TaskStatus.assigned,
+                            );
+
+                            context.read<OrderCubit>().addNewOrder(newTask);
+
+                            // ارجع للـ home بعد الطلب الجديد
+                            context.goNamed(AppRoutes.home);
                           },
                         ),
                       );

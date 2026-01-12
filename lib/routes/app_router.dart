@@ -6,8 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // --- Imports (Screens) ---
 import 'package:masar_app/features/add_client/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 import 'package:masar_app/features/home/presentation/screens/client_details_screen.dart';
-import 'package:masar_app/features/home/presentation/screens/map_screen.dart';
+import 'package:masar_app/features/home/presentation/screens/map/map_screen.dart';
 import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
 import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
@@ -44,7 +45,6 @@ class AppRouter {
         path: '/login',
         name: AppRoutes.login,
         builder: (context, state) => LoginScreen(),
-       
       ),
 
       // 3. Home (مغلف بالـ Provider بتاع الـ Navbar)
@@ -76,39 +76,45 @@ class AppRouter {
 
       // 6. Chat (مغلف بالـ Provider والبيانات المطلوبة)
       GoRoute(
-  path: '/chat/:agentId',
-  name: AppRoutes.chat,
-  builder: (context, state) {
-    final agentId = state.pathParameters['agentId']!;
-    final currentUserId = state.extra as String;
+        path: '/chat/:agentId',
+        name: AppRoutes.chat,
+        builder: (context, state) {
+          final agentId = state.pathParameters['agentId']!;
+          final currentUserId = state.extra as String;
 
-    return BlocProvider(
-      create: (_) => ChatCubit(
-        repo: ChatsRepoImpl(
-          firestore: FirebaseFirestore.instance,
-        ),
-        chatId: agentId, // chatId == agentId
-        currentUserId: currentUserId,
-      )..listenMessages(),
-      child: ChatScreen(
-        chatId: agentId,
-        currentUserId: currentUserId,
+          return BlocProvider(
+            create: (_) => ChatCubit(
+              repo: ChatsRepoImpl(firestore: FirebaseFirestore.instance),
+              chatId: agentId, // chatId == agentId
+              currentUserId: currentUserId,
+            )..listenMessages(),
+            child: ChatScreen(chatId: agentId, currentUserId: currentUserId),
+          );
+        },
       ),
-    );
-  },
-),
-
 
       GoRoute(
         path: '/client-details',
         name: AppRoutes.clientDetails,
-        builder: (context, state) => const ClientDetailsScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+
+          return ClientDetailsScreen(
+            clientId: extra['clientId'] as String,
+            task: extra['task'] as TaskModel,
+            tasks: extra['tasks'] as List<TaskModel>,
+          );
+        },
       ),
 
-       GoRoute(
+      GoRoute(
         path: '/map',
         name: AppRoutes.map,
-        builder: (context, state) => const MapScreen(),
+        builder: (context, state) {
+          final tasks =
+              (state.extra as Map<String, dynamic>)['tasks'] as List<TaskModel>;
+          return MapScreen(tasks: tasks);
+        },
       ),
     ],
   );

@@ -4,13 +4,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 
-import 'package:masar_app/features/home/map/customer_map_services.dart';
+import 'package:masar_app/features/home/presentation/screens/map/customer_map_services.dart';
+import 'package:masar_app/routes/app_routes.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final List<TaskModel> tasks;
+  const MapScreen({super.key, required this.tasks});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -46,7 +50,10 @@ class _MapScreenState extends State<MapScreen> {
   // ================= STEP 1 =================
   // تحميل الخريطة + العملاء فقط (سريع)
   Future<void> _loadMapAndCustomers() async {
-    final markers = await CustomersMapService.getCustomerMarkers(context);
+    final markers = await CustomersMapService.getCustomerMarkers(
+      context: context,
+      tasks: widget.tasks, // هنا يجب تمرير قائمة المهام الفعلية
+    );
 
     setState(() {
       customerMarkers = markers;
@@ -164,8 +171,14 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading || !isMapReady) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          context.pushNamed(AppRoutes.home);
+        },
+        child: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/product_task_model.dart';
 import 'package:masar_app/features/home/data/models/product_model.dart';
 import 'package:masar_app/features/home/data/repos/product_repo.dart';
-import 'package:masar_app/features/home/data/repos/product_repo_imple.dart';
 import 'package:masar_app/features/home/presentation/manager/orders/cubit/order_cubit.dart';
 import 'package:masar_app/features/home/presentation/manager/product/cubit/products_cubit.dart';
 import 'package:masar_app/features/home/presentation/manager/product/cubit/products_state.dart';
@@ -153,7 +153,22 @@ class _ProductData {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
+
+  /// يحول البيانات المؤقتة لـ ProductTaskModel عشان تدخل في TaskModel
+  ProductTaskModel toTaskProduct() {
+    if (selectedProduct == null) {
+      throw Exception('selectedProduct is null');
+    }
+
+    return ProductTaskModel(
+      id: selectedProduct!.id,
+      name: selectedProduct!.nameAr, // ممكن تستخدم nameEn لو محتاج
+      price: int.tryParse(priceController.text) ?? selectedProduct!.price.toInt(),
+      quantity: int.tryParse(quantityController.text) ?? 1,
+    );
+  }
 }
+
 
 /* ---------------- Product Card ---------------- */
 class ProductCard extends StatelessWidget {

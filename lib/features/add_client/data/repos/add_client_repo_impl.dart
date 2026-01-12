@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_client_repo.dart';
-import '../models/client_model.dart';
+import '../../../../core/models/client_model.dart';
 
 class AddClientRepoImpl implements AddClientRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

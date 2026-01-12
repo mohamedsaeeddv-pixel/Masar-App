@@ -4,9 +4,13 @@ abstract class OrderState {
   const OrderState();
 }
 
-class OrderInitial extends OrderState {}
+class OrderInitial extends OrderState {
+  const OrderInitial();
+}
 
-class OrderLoading extends OrderState {}
+class OrderLoading extends OrderState {
+  const OrderLoading();
+}
 
 class OrderSuccess extends OrderState {
   final String message;

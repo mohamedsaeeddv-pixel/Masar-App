@@ -1,15 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class OrderActionModel {
-  final String orderId;
-  final String agentId;
-  final String clientId;
+  final String id;           // Firestore doc id
+  final String orderId;      // Task / Order id
+  final String agentId;      // Representative id
+  final String clientId;     // Customer id
   final OrderActionType type;
   final DateTime timestamp;
+
+  // Optional (per action)
   final String? notes;
   final String? productName;
   final double? productPrice;
-  final int? quantity; // <-- جديد
+  final int? quantity;
 
   OrderActionModel({
+    required this.id,
     required this.orderId,
     required this.agentId,
     required this.clientId,
@@ -18,116 +24,83 @@ class OrderActionModel {
     this.notes,
     this.productName,
     this.productPrice,
-    this.quantity, // <-- جديد
+    this.quantity,
   });
 
-  factory OrderActionModel.completeOrder({
-     String? orderId,
+  /// 🔹 Factory موحّدة لكل الحالات
+  factory OrderActionModel.create({
+    required String orderId,
     required String agentId,
     required String clientId,
-    required bool delivered,
-    DateTime? timestamp,
+    required OrderActionType type,
     String? notes,
     String? productName,
     double? productPrice,
-    int? quantity, // <-- جديد
+    int? quantity,
+    DateTime? timestamp,
   }) {
     return OrderActionModel(
-      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '',
+      orderId: orderId,
       agentId: agentId,
       clientId: clientId,
-      type: delivered ? OrderActionType.delivered : OrderActionType.received,
+      type: type,
       timestamp: timestamp ?? DateTime.now(),
       notes: notes,
       productName: productName,
       productPrice: productPrice,
-      quantity: quantity, // <-- جديد
+      quantity: quantity,
     );
   }
 
-  factory OrderActionModel.returnOrder({
-     String? orderId,
-    required String agentId,
-    required String clientId,
-    DateTime? timestamp,
-    String? notes,
-    String? productName,
-    double? productPrice,
-    int? quantity, // <-- جديد
-  }) {
-    return OrderActionModel(
-      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
-      agentId: agentId,
-      clientId: clientId,
-      type: OrderActionType.returnOrder,
-      timestamp: timestamp ?? DateTime.now(),
-      notes: notes,
-      productName: productName,
-      productPrice: productPrice,
-      quantity: quantity, // <-- جديد
-    );
-  }
-
-  factory OrderActionModel.newOrder({
-     String? orderId,
-    required String agentId,
-    required String clientId,
-    DateTime? timestamp,
-    String? notes,
-    String? productName,
-    double? productPrice,
-    int? quantity, // <-- جديد
-  }) {
-    return OrderActionModel(
-      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
-      agentId: agentId,
-      clientId: clientId,
-      type: OrderActionType.newOrder,
-      timestamp: timestamp ?? DateTime.now(),
-      notes: notes,
-      productName: productName,
-      productPrice: productPrice,
-      quantity: quantity, // <-- جديد
-    );
-  }
-
-  factory OrderActionModel.cancelOrder({
-     String? orderId,
-    required String agentId,
-    required String clientId,
-    DateTime? timestamp,
-    String? notes,
-  }) {
-    return OrderActionModel(
-      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
-      agentId: agentId,
-      clientId: clientId,
-      type: OrderActionType.cancelled,
-      timestamp: timestamp ?? DateTime.now(),
-      notes: notes,
-    );
-  }
-
+  /// 🔹 Firestore serialization
   Map<String, dynamic> toMap() {
     return {
       'orderId': orderId,
       'agentId': agentId,
       'clientId': clientId,
       'type': type.name,
-      'timestamp': timestamp.toIso8601String(),
+      'timestamp': Timestamp.fromDate(timestamp),
       'notes': notes,
       'productName': productName,
       'productPrice': productPrice,
-      'quantity': quantity, // <-- جديد
+      'quantity': quantity,
     };
   }
+
+  factory OrderActionModel.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    final data = doc.data()!;
+    return OrderActionModel(
+      id: doc.id,
+      orderId: data['orderId'],
+      agentId: data['agentId'],
+      clientId: data['clientId'],
+      type: OrderActionTypeX.fromString(data['type']),
+      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      notes: data['notes'],
+      productName: data['productName'],
+      productPrice: data['productPrice'] != null
+          ? (data['productPrice'] as num).toDouble()
+          : null,
+      quantity: data['quantity'],
+    );
+  }
+}
+enum OrderActionType {
+  received,     // استلام
+  delivered,    // تسليم
+  cancelled,    // إلغاء
+  newOrder,     // طلب جديد
+  returnOrder,  // استرجاع
 }
 
-
-enum OrderActionType {
-  received,
-  delivered,
-  cancelled,
-  newOrder,
-  returnOrder,
+extension OrderActionTypeX on OrderActionType {
+  static OrderActionType fromString(String value) {
+    return OrderActionType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => OrderActionType.received,
+    );
+  }
 }

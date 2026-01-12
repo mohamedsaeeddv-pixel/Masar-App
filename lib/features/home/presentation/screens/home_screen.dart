@@ -64,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return TasksCubit(
           repository: TaskRepositoryImpl(firestore: FirebaseFirestore.instance),
-          agentId: authState.user.uid,
-        )..fetchCustomerTasks();
+          representativeId: authState.user.uid,
+        )..getTasks();
       },
       child: DailyTasksScreen(
         agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated)

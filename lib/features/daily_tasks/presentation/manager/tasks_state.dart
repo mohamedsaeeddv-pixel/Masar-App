@@ -1,20 +1,25 @@
-import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_and_customer_model.dart';
-import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 
-abstract class TasksState {}
+abstract class TasksState {
+  const TasksState();
+}
 
-class TasksInitial extends TasksState {}
+class TasksInitial extends TasksState {
+  const TasksInitial();
+}
 
-class TasksLoading extends TasksState {}
+class TasksLoading extends TasksState {
+  const TasksLoading();
+}
 
 class TasksSuccess extends TasksState {
   final List<TaskModel> tasks;
-    final List<TaskWithCustomer> customerTasks;
 
-  TasksSuccess({this.tasks = const [], this.customerTasks = const []});
+  const TasksSuccess(this.tasks);
 }
 
 class TasksFailure extends TasksState {
   final String message;
-  TasksFailure(this.message);
+
+  const TasksFailure(this.message);
 }

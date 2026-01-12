@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 import 'package:masar_app/routes/app_routes.dart';
 // تأكد من صحة مسار استيراد ملف الـ core
 import '../../../../core/constants/app_colors.dart';
 
 class NavigationCard extends StatelessWidget {
-      final int clientsLength;
+    
+     final List<TaskModel> tasks;
 
 
-  const NavigationCard({super.key, required this.clientsLength});
+  const NavigationCard({super.key,  required this.tasks});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,7 @@ class NavigationCard extends StatelessWidget {
           ),
 
           Text(
-            '$clientsLength عملاء في انتظارك',
+            '${tasks.length} عملاء في انتظارك',
             style: const TextStyle(
               color: AppColors.textMutedGray, // النص الرمادي الباهت
               fontSize: 14,
@@ -80,7 +82,8 @@ class NavigationCard extends StatelessWidget {
               // منطق فتح الخرائط
 
               context.goNamed(
-                AppRoutes.map
+                AppRoutes.map,
+                extra: {'tasks': tasks},
               );
             },
             icon: const Icon(Icons.near_me_outlined),

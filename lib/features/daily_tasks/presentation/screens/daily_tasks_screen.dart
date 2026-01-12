@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 import 'package:masar_app/features/daily_tasks/presentation/manager/tasks_state.dart';
 import '../manager/tasks_cubit.dart';
 import '../widgets/progress_card.dart';
@@ -27,8 +28,7 @@ class DailyTasksScreen extends StatelessWidget {
       body: Stack(
         children: [
           RefreshIndicator(
-            onRefresh: () async =>
-                context.read<TasksCubit>().fetchCustomerTasks(),
+            onRefresh: () async => context.read<TasksCubit>().getTasks(),
             child: BlocBuilder<TasksCubit, TasksState>(
               builder: (context, state) {
                 if (state is TasksLoading) {
@@ -42,9 +42,11 @@ class DailyTasksScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ProgressCard(clientsLength: state.customerTasks.length),
+                        // ProgressCard(clientsLength: state.tasks.length),
                         const SizedBox(height: 16),
-                        NavigationCard(clientsLength: state.customerTasks.length),
+                        NavigationCard(
+                          tasks: state.tasks.where((task) => task.status == TaskStatus.assigned).toList(),
+                        ),
                         const SizedBox(height: 20),
                         const Text(
                           'المهام المعلقة',
@@ -54,17 +56,18 @@ class DailyTasksScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        state.customerTasks.isEmpty
+                        state.tasks.isEmpty
                             ? _buildEmptyState()
                             : ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: state.customerTasks.length,
-                                itemBuilder: (context, index) => TaskItem(
-                                  taskClient: state.customerTasks[index],
-                                  clientsName:
-                                      state.customerTasks[index].customer.name,
-                                ),
+                                itemCount: state.tasks.length,
+                                itemBuilder: (context, index) {
+                                  if (state.tasks[index].status ==
+                                      TaskStatus.assigned){
+                                    return TaskItem(task: state.tasks[index]);}
+                                  return const SizedBox.shrink();
+                                },
                               ),
                         const SizedBox(height: 100),
                       ],

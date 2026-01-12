@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_and_customer_model.dart';
-import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_model.dart';
-import 'package:masar_app/features/daily_tasks/data/repos/daily_tasks_repo.dart';
+import 'package:flutter/widgets.dart';
 
-import '../../../../core/errors/failures.dart';
+import 'package:masar_app/core/errors/failures.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
+import 'package:masar_app/features/daily_tasks/data/repos/daily_tasks_repo.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
   final FirebaseFirestore firestore;
@@ -13,90 +13,67 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<Either<Failure, List<TaskModel>>> getDailyTasks({
-    required String agentId,
+    required String representativeId,
   }) async {
     try {
-      final querySnapshot = await firestore
-          .collection('tasks')
-          .where('agent.id', isEqualTo: agentId)
-          .where('status', isEqualTo: 'assigned')
+      final snapshot = await firestore
+          .collection('representative')
+          .doc(representativeId)
+          .collection('orders')
           .orderBy('createdAt', descending: true)
           .get();
 
-      final tasks = querySnapshot.docs
-          .map((doc) => TaskModel.fromFirestore(doc))
-          .toList();
+      final orders = snapshot.docs.map((doc) {
+        final task = TaskModel.fromMap(doc.data());
+        return task.copyWith(id: doc.id); // <-- هنا بتحط الـ doc.id
+      }).toList();
 
-      return Right(tasks);
-    } on FirebaseException catch (e) {
-      return Left(FirebaseFailure.fromException(e));
-    } catch (e) {
-      return const Left(
-        FirebaseFailure(
-          message: 'حدث خطأ غير متوقع أثناء تحميل المهام',
-        ),
+      debugPrint(
+        'Fetched ${orders.length} orders for representative $representativeId',
       );
+
+      return Right(orders);
+    }
+    // 🔴 Firestore / Firebase errors
+    on FirebaseException catch (e) {
+      debugPrint('FirebaseException: ${e.message}');
+      return Left(FirebaseFailure.fromException(e));
+    }
+    // 🔴 Any unexpected error
+    catch (e) {
+      debugPrint('FirebaseException: ${e.toString()}');
+      return const Left(FirebaseFailure(message: 'حدث خطأ غير متوقع'));
     }
   }
 
   @override
-  Future<Either<Failure, TaskModel>> getTaskById({
-    required String taskId,
+  Future<Either<Failure, TaskModel>> getOrderById({
+    required String representativeId,
+    required String orderId,
   }) async {
     try {
-      final doc =
-          await firestore.collection('tasks').doc(taskId).get();
+      final doc = await firestore
+          .collection('representative')
+          .doc(representativeId)
+          .collection('orders')
+          .doc(orderId)
+          .get();
 
       if (!doc.exists) {
         return const Left(
-          FirebaseFailure(
-            message: 'المهمة غير موجودة',
-            code: 'not-found',
-          ),
+          FirebaseFailure(message: 'الطلب غير موجود', code: 'not-found'),
         );
       }
 
-      return Right(TaskModel.fromFirestore(doc));
-      } on FirebaseException catch (e) {
+      return Right(TaskModel.fromMap(doc.data()!));
+    }
+    // 🔴 Firestore / Firebase errors
+    on FirebaseException catch (e) {
       return Left(FirebaseFailure.fromException(e));
-    } catch (e) {
-      return const Left(
-        FirebaseFailure(
-          message: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
-        ),
-      );
+    }
+    // 🔴 Any unexpected error
+    catch (e) {
+      return const Left(FirebaseFailure(message: 'حدث خطأ غير متوقع'));
     }
   }
-
-@override
-Future<Either<Failure, List<TaskWithCustomer>>> getCustomerTasks({required String agentId,}) async {
-  try {
-    final snapshot = await firestore
-        .collection('tasks')
-        .where('agent.id', isEqualTo: agentId)
-        .where('status', isEqualTo: 'assigned')
-        .orderBy('createdAt', descending: true)
-        .get();
-
-    final all = snapshot.docs
-        .map((doc) => TaskModel.fromFirestore(doc))
-        .expand((task) => task.customers.map(
-              (c) => TaskWithCustomer(task: task, customer: c),
-            ))
-        .toList();
-            print('Loaded ${all.length} customer tasks.');
-
-
-    return Right(all);
-  } on FirebaseException catch (e) {
-    return Left(FirebaseFailure.fromException(e));
-  } catch (e) {
-    return const Left(FirebaseFailure(
-      message: 'حدث خطأ غير متوقع أثناء تحميل تفاصيل المهمة',
-    ));
-  }
 }
-
-  }
-
-

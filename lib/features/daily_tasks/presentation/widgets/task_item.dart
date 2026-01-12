@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:masar_app/features/daily_tasks/data/models/task_models.dart/task_and_customer_model.dart';
+import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 // استيراد الـ Core
 import '../../../../core/constants/app_colors.dart';
 
 class TaskItem extends StatelessWidget {
-  final TaskWithCustomer? taskClient;
-  final String? clientsName;
-  const TaskItem({super.key,  this.taskClient, this.clientsName});
+  final TaskModel task;
+  
+  const TaskItem({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
     // تحديد اللون بناءً على نوع المهمة باستخدام ألوان الـ Core
-    Color statusColor = taskClient?.task.taskType == "return"
+    Color statusColor = task.taskType.label == "استرجاع"
         
         ? AppColors.amberAccent: AppColors.cyanSecondary;
 
@@ -36,18 +36,18 @@ class TaskItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                  taskClient?.task.area.name ?? '',
+                  task.area.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textMutedGray // من الـ Core
                   )
               ),
-              _buildBadge(taskClient?.task.taskType ?? '', statusColor),
+              _buildBadge(task.taskType.label, statusColor),
             ],
           ),
           const Divider(height: 30, color: AppColors.borderLight), // من الـ Core
           Text(
-              'العميل: ${clientsName ?? 'غير معروف'}',
+              'العميل: ${task.client.name }',
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -56,7 +56,7 @@ class TaskItem extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-              taskClient?.task.id ?? '',
+              task.client.phone,
               style: const TextStyle(
                   color: AppColors.textMutedGray, // من الـ Core
                   fontSize: 13
@@ -67,7 +67,7 @@ class TaskItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                  '${taskClient?.task.totalPrice ?? ''} ج.م',
+                  '${task.totalPrice} ج.م',
                   style: const TextStyle(
                       color: AppColors.bluePrimaryDark, // من الـ Core
                       fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class TaskItem extends StatelessWidget {
                   )
               ),
               Text(
-                  taskClient?.task.createdAt.toLocal().toString().split(' ')[0] ?? '',
+                  task.createdAt.toLocal().toString().split(' ')[0],
                   style: const TextStyle(
                       color: AppColors.textMutedGray, // من الـ Core
                       fontSize: 14
