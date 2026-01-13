@@ -25,7 +25,7 @@ class OrderRepositoryImpl implements OrderRepository {
       await newOrderRef.set({
         ...task.toMap(),
         'createdAt': FieldValue.serverTimestamp(),
-        'status': TaskStatus.assigned.name,
+        'status': TaskSatusText.newOrder.label,
       });
 
       return const Right(unit);

@@ -431,13 +431,12 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                                   .toInt(),
                               createdAt: DateTime.now(),
                               representativeId: agentId,
-                              status: TaskStatus.assigned,
+                              status: TaskStatus.newOrder,
                             );
 
                             context.read<OrderCubit>().addNewOrder(newTask);
 
-                            // ارجع للـ home بعد الاسترجاع
-                            context.goNamed(AppRoutes.home);
+                           
                           },
                         ),
                       );
@@ -456,24 +455,21 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                     color: AppColors.green,
                     icon: Icons.check_circle,
                     onPressed: () {
-                      final newStatus = widget.task.taskType.label == 'تحصيل'
-                          ? TaskStatus.delivered
-                          : TaskStatus.received;
+                  
 
                       final updatedTask = widget.task.copyWith(
-                        status: newStatus,
+                        status: TaskStatus.completed,
                         updatedAt: DateTime.now(),
                       );
 
-                      // قفل الزر بعد الضغط
-                      setState(() {
-                        _buttonDisabled[widget.task.id] = true;
-                      });
+                    
 
                       context.read<OrderCubit>().sendAction(
                         updatedTask,
-                        newStatus,
+                        TaskStatus.completed,
                       );
+                      // ارجع للـ home بعد التسليم
+                            context.goNamed(AppRoutes.home);
                     },
                   ),
                 ),
@@ -499,17 +495,14 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                             Navigator.pop(context);
 
                             final updatedTask = widget.task.copyWith(
-                              status: TaskStatus.cancelled,
+                              status: TaskStatus.failed,
                               updatedAt: DateTime.now(),
                             );
-                            // قفل الزر بعد الضغط
-                            setState(() {
-                              _buttonDisabled[widget.task.id] = true;
-                            });
+                           
 
                             context.read<OrderCubit>().sendAction(
                               updatedTask,
-                              TaskStatus.cancelled,
+                              TaskStatus.failed,
                             );
 
                             // ارجع للـ home بعد الإلغاء
@@ -569,13 +562,12 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                                   .toInt(),
                               createdAt: DateTime.now(),
                               representativeId: agentId,
-                              status: TaskStatus.assigned,
+                              status: TaskStatus.newOrder,
                             );
 
                             context.read<OrderCubit>().addNewOrder(newTask);
 
-                            // ارجع للـ home بعد الطلب الجديد
-                            context.goNamed(AppRoutes.home);
+                          
                           },
                         ),
                       );

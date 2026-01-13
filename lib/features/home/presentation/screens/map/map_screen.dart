@@ -171,95 +171,95 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading || !isMapReady) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          context.pushNamed(AppRoutes.home);
-        },
-        child: const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('الملاحة'),
-        actions: [
-          if (isRouteLoading)
-            const Padding(
-              padding: EdgeInsets.all(12),
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-        ],
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'tracking_fab',
-        onPressed: myLocation == null
-            ? null
-            : isTracking
-            ? _stopTracking
-            : _startTracking,
-        backgroundColor: isTracking ? Colors.red : Colors.green,
-        child: Icon(isTracking ? Icons.stop : Icons.play_arrow),
-      ),
-
-      body: FlutterMap(
-        options: MapOptions(
-          initialCenter:
-          myLocation ?? customerMarkers.first.point,
-          initialZoom: 15,
+    return PopScope(
+      canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          context.pushNamed(AppRoutes.home);
+        },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('الملاحة'),
+          actions: [
+            if (isRouteLoading)
+              const Padding(
+                padding: EdgeInsets.all(12),
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+          ],
         ),
-        children: [
-          // ===== MAP =====
-          TileLayer(
-            urlTemplate:
-            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      
+        floatingActionButton: FloatingActionButton(
+          heroTag: 'tracking_fab',
+          onPressed: myLocation == null
+              ? null
+              : isTracking
+              ? _stopTracking
+              : _startTracking,
+          backgroundColor: isTracking ? Colors.red : Colors.green,
+          child: Icon(isTracking ? Icons.stop : Icons.play_arrow),
+        ),
+      
+        body: FlutterMap(
+          options: MapOptions(
+            initialCenter:
+            myLocation ?? customerMarkers.first.point,
+            initialZoom: 15,
           ),
-
-          // ===== NAVIGATION ROUTE =====
-          if (navigationRoute.isNotEmpty)
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: navigationRoute,
-                  strokeWidth: 4,
-                  color: Colors.blue,
-                ),
-              ],
+          children: [
+            // ===== MAP =====
+            TileLayer(
+              urlTemplate:
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             ),
-
-          // ===== TRACKING LINE =====
-          if (trackingPoints.length > 1)
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: trackingPoints,
-                  strokeWidth: 3,
-                  color: Colors.green,
-                ),
-              ],
-            ),
-
-          // ===== MARKERS =====
-          MarkerLayer(
-            markers: [
-              if (myLocation != null)
-                Marker(
-                  width: 40,
-                  height: 40,
-                  point: myLocation!,
-                  child: const Icon(
-                    Icons.navigation,
+      
+            // ===== NAVIGATION ROUTE =====
+            if (navigationRoute.isNotEmpty)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: navigationRoute,
+                    strokeWidth: 4,
                     color: Colors.blue,
-                    size: 30,
                   ),
-                ),
-              ...customerMarkers,
-            ],
-          ),
-        ],
+                ],
+              ),
+      
+            // ===== TRACKING LINE =====
+            if (trackingPoints.length > 1)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: trackingPoints,
+                    strokeWidth: 3,
+                    color: Colors.green,
+                  ),
+                ],
+              ),
+      
+            // ===== MARKERS =====
+            MarkerLayer(
+              markers: [
+                if (myLocation != null)
+                  Marker(
+                    width: 40,
+                    height: 40,
+                    point: myLocation!,
+                    child: const Icon(
+                      Icons.navigation,
+                      color: Colors.blue,
+                      size: 30,
+                    ),
+                  ),
+                ...customerMarkers,
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -112,10 +112,20 @@ factory TaskModel.fromMap(Map<String, dynamic> map) {
 }
 enum TaskStatus {
   assigned,
-  received,
-  delivered,
-  cancelled,
-  returned,
+  completed,
+  newOrder,
+  failed,
+  
+}
+enum TaskSatusText {
+  assigned('assigned'),
+  completed('completed'),
+  newOrder('new'),
+  failed('failed');
+
+
+  final String label;
+  const TaskSatusText(this.label);
 }
 
 extension TaskStatusX on TaskStatus {

@@ -36,13 +36,11 @@ Future<void> addNewOrder(TaskModel task) async {
     switch (status) {
       case TaskStatus.assigned:
         return 'تم إضافة الطلب بنجاح';
-      case TaskStatus.returned:
-        return 'تم تأكيد طلب الاسترجاع بنجاح';
-      case TaskStatus.delivered:
-        return 'تم تأكيد تسليم الطلب بنجاح';
-      case TaskStatus.cancelled:
+      case TaskStatus.newOrder:
+        return 'تم إضافة الطلب بنجاح';
+      case TaskStatus.failed:
         return 'تم إلغاء الطلب بنجاح';
-      case TaskStatus.received:
+      case TaskStatus.completed:
         return 'تم تأكيد استلام الطلب بنجاح';
     }
   }
