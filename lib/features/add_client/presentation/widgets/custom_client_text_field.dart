@@ -7,6 +7,7 @@ class CustomClientTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final double fontFactor; // استقبال معامل الخط من الأب
 
   const CustomClientTextField({
     super.key,
@@ -15,47 +16,68 @@ class CustomClientTextField extends StatelessWidget {
     required this.controller,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.fontFactor = 1.0, // القيمة الافتراضية
   });
 
   @override
   Widget build(BuildContext context) {
+    // تحديد هل المظهر الحالي داكن أم فاتح
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // الـ Label باستخدام متغير اللون
+        // الـ Label الديناميكي
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0, top: 16.0),
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: AppColors.bluePrimaryDark, // اللون الموحد
+              fontSize: 15 * fontFactor, // تكبير الخط
+              color: isDarkMode ? Colors.blue[200] : AppColors.bluePrimaryDark,
             ),
           ),
         ),
-        // الـ TextField بتصميمه الموحد
+
+        // الـ TextField بتصميم يستجيب للمظهر
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
+          style: TextStyle(
+            fontSize: 16 * fontFactor,
+            color: isDarkMode ? Colors.white : Colors.black, // نص الكتابة
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(fontSize: 14, color: AppColors.textMutedGray),
+            hintStyle: TextStyle(
+                fontSize: 14 * fontFactor,
+                color: isDarkMode ? Colors.grey[500] : AppColors.textMutedGray
+            ),
             filled: true,
-            fillColor: AppColors.backgroundWhite,
+            // تغيير لون الخلفية حسب المظهر
+            fillColor: isDarkMode ? const Color(0xFF2C2C2C) : AppColors.backgroundWhite,
             contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            // الحدود العادية
+
+            // الحدود في الوضع العادي
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(color: AppColors.borderLight),
+              borderSide: BorderSide(
+                  color: isDarkMode ? Colors.grey[700]! : AppColors.borderLight
+              ),
             ),
-            // الحدود عند الضغط (Focus) باستخدام متغير اللون
+
+            // الحدود عند التفاعل (Focus)
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(color: AppColors.bluePrimaryDark, width: 2),
+              borderSide: BorderSide(
+                  color: isDarkMode ? Colors.blue[300]! : AppColors.bluePrimaryDark,
+                  width: 2
+              ),
             ),
-            // الحدود في حالة الخطأ
+
+            // حدود الخطأ (Error) تفضل واضحة
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: const BorderSide(color: AppColors.redDestructive),
@@ -64,6 +86,9 @@ class CustomClientTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               borderSide: const BorderSide(color: AppColors.redDestructive, width: 2),
             ),
+
+            // تحسين شكل رسالة الخطأ
+            errorStyle: TextStyle(fontSize: 12 * fontFactor),
           ),
         ),
       ],

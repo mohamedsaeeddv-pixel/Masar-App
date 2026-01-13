@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// --- Imports (Screens) ---
+// --- Screens Imports ---
 import 'package:masar_app/features/add_client/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
@@ -14,40 +15,61 @@ import 'package:masar_app/features/home/presentation/screens/home_screen.dart';
 import 'package:masar_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:masar_app/features/spalsh/presentation/splash_screen.dart';
 
-// --- Imports (Managers & Repos) ---
-
+// --- Managers Imports ---
 import 'package:masar_app/features/add_client/presentation/manager/add_client_cubit.dart';
 import 'package:masar_app/features/add_client/data/repos/add_client_repo_impl.dart';
 import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
 import 'package:masar_app/features/chat/data/repos/chats_repo_impel.dart';
 import 'package:masar_app/features/home/presentation/manager/home_cubit.dart';
+import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 
 import 'app_routes.dart';
 
 class AppRouter {
-  static final GlobalKey<NavigatorState> parentNavigatorKey =
-      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> parentNavigatorKey = GlobalKey<NavigatorState>();
+
+  // 1. وسيط خارجي عشان نبلغ الراوتر بأي تغيير في حالة تسجيل الدخول
+  static final StreamController<void> authNotifier = StreamController<void>.broadcast();
 
   static final GoRouter router = GoRouter(
     navigatorKey: parentNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/home',
     debugLogDiagnostics: true,
+
+    // 2. السطر ده بيخلي الراوتر "يفوق" أول ما نبعت إشارة للـ authNotifier
+    refreshListenable: GoRouterRefreshStream(authNotifier.stream),
+
+    redirect: (context, state) {
+      final authState = context.read<AuthCubit>().state;
+      final bool isLoggingIn = state.matchedLocation == '/login';
+
+      // لو لسه في مرحلة الفحص الأولية
+      if (authState is AuthCubitInitial) return null;
+
+      // 3. المنطق القاطع: لو مش مسجل دخول، ارميه على اللوجن فوراً
+      if (authState is AuthCubitUnauthenticated) {
+        return isLoggingIn ? null : '/login';
+      }
+
+      // 4. لو مسجل دخول وبيحاول يروح للوجن، ممنوع
+      if (authState is AuthCubitAuthenticated) {
+        if (isLoggingIn) return '/home';
+      }
+
+      return null;
+    },
+
     routes: [
-      // 1. Splash
       GoRoute(
-        path: '/',
+        path: '/splash',
         name: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
       ),
-
-      // 2. Login (مغلف بالـ Provider بتاعه)
       GoRoute(
         path: '/login',
         name: AppRoutes.login,
-        builder: (context, state) => LoginScreen(),
+        builder: (context, state) => const LoginScreen(),
       ),
-
-      // 3. Home (مغلف بالـ Provider بتاع الـ Navbar)
       GoRoute(
         path: '/home',
         name: AppRoutes.home,
@@ -56,15 +78,11 @@ class AppRouter {
           child: const HomeScreen(),
         ),
       ),
-
-      // 4. Profile
       GoRoute(
         path: '/profile',
         name: AppRoutes.profile,
         builder: (context, state) => const ProfileScreen(),
       ),
-
-      // 5. Add Client (مغلف بالـ Provider بتاعه)
       GoRoute(
         path: '/add-client',
         name: AppRoutes.addClient,
@@ -73,8 +91,6 @@ class AppRouter {
           child: const AddClientScreen(),
         ),
       ),
-
-      // 6. Chat (مغلف بالـ Provider والبيانات المطلوبة)
       GoRoute(
         path: '/chat/:agentId',
         name: AppRoutes.chat,
@@ -92,7 +108,6 @@ class AppRouter {
           );
         },
       ),
-
       GoRoute(
         path: '/client-details',
         name: AppRoutes.clientDetails,
@@ -106,7 +121,6 @@ class AppRouter {
           );
         },
       ),
-
       GoRoute(
         path: '/map',
         name: AppRoutes.map,
@@ -118,4 +132,20 @@ class AppRouter {
       ),
     ],
   );
+}
+
+// كلاس مساعد لتحويل الـ Stream لـ Listenable
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (dynamic _) => notifyListeners(),
+    );
+  }
+  late final StreamSubscription<dynamic> _subscription;
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }

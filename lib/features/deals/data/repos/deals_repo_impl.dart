@@ -20,28 +20,29 @@ class DealsRepoImpl implements DealsRepo {
       return snapshot.docs.map((doc) {
         final data = doc.data();
 
-        String rawStatus = data['status'] ?? 'assigned';
-        String displayStatus;
+        // 1. الدخول جوه خريطة العميل لسحب البيانات
+        final customerData = data['customer'] as Map<String, dynamic>?;
 
-        if (rawStatus == 'completed') {
-          displayStatus = 'تمت';
-        } else if (rawStatus == 'assigned') {
-          displayStatus = 'قيد الانتظار';
-        } else if (rawStatus == 'failed') {
-          displayStatus = 'فشل';
-        } else {
-          displayStatus = rawStatus;
-        }
+        // 2. الدخول جوه خريطة المنطقة لسحب العنوان
+        final areaData = data['area'] as Map<String, dynamic>?;
+
+        // 3. سحب بيانات نوع المهمة لاستخدامها كعنوان (استرجاع/استلام)
+        final taskData = data['taskType'] as Map<String, dynamic>?;
+        String taskTitle = taskData?['label'] ?? 'طلب جديد'; // سيظهر "استرجاع" أو "استلام"
+
+        // 4. تحويل الحالة لنص عربي
+        String rawStatus = data['status']?.toString().trim() ?? 'assigned';
+        String displayStatus = (rawStatus == 'completed') ? 'تمت' : (rawStatus == 'assigned' ? 'قيد الانتظار' : 'فشل');
 
         return DealModel(
           dealId: doc.id,
-          customerId: data['customerId'] ?? 'CUST-0000',
-          customerName: data['customerName'] ?? 'غير معروف',
-          // المبلغ يظهر بالجنيه كما في التصميم
+          customerId: customerData?['id'] ?? 'CUST-0000',
+          customerName: customerData?['name'] ?? 'غير معروف',
           amount: "${data['totalPrice'] ?? 0} جنيه",
           status: displayStatus,
-          location: data['address'] ?? 'القاهرة',
-          phone: data['phone'] ?? '',
+          location: areaData?['name'] ?? 'القاهرة',
+          phone: customerData?['phone'] ?? 'لا يوجد رقم',
+          taskTitle: taskTitle, // إرسال العنوان الجديد للموديل
         );
       }).toList();
     });

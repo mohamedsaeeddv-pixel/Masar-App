@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as mp;
+import 'package:easy_localization/easy_localization.dart'; // أضفنا المكتبة هنا
 
 class LocationService {
   static Future<Position?> getCurrentLocation() async {
@@ -17,7 +18,7 @@ class LocationService {
     return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
-  static Future<String?> getAreaFromCoords(double lat, double lng) async {
+  static Future<String?> getAreaFromCoords(double lat, double lng, String languageCode) async {
     try {
       final String response = await rootBundle.loadString('assets/areas.json');
       final data = json.decode(response);
@@ -30,7 +31,14 @@ class LocationService {
               .toList();
 
           if (mp.PolygonUtil.containsLocation(userPoint, points, false)) {
-            return feature['properties']['SHYK_ARNAME'] ?? feature['properties']['SHYK_ANA_1'];
+            // منطق اختيار اسم المنطقة بناءً على اللغة
+            if (languageCode == 'ar') {
+              return feature['properties']['SHYK_ARNAME'] ?? feature['properties']['SHYK_ANA_1'];
+            } else {
+              // لو ملف الـ JSON فيه اسم بالإنجليزي (زي SHYK_ENNAME) استخدمه
+              // لو مفيش، ممكن ترجع الاسم العربي كـ Fallback أو تعمل خريطة ترجمة
+              return feature['properties']['SHYK_ENNAME'] ?? feature['properties']['SHYK_ARNAME'];
+            }
           }
         }
       }

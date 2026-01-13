@@ -3,20 +3,19 @@ import '../../data/models/settings_model.dart';
 abstract class SettingsState {}
 
 class SettingsInitial extends SettingsState {}
-
 class SettingsLoading extends SettingsState {}
+class SettingsError extends SettingsState { final String message; SettingsError(this.message); }
 
-class SettingsLoaded extends SettingsState {
+// كلاس أساسي لأي حالة فيها بيانات الإعدادات
+class SettingsDataState extends SettingsState {
   final SettingsModel settings;
-  SettingsLoaded(this.settings);
+  SettingsDataState(this.settings);
 }
 
-class SettingsUpdated extends SettingsState {
-  final SettingsModel settings;
-  SettingsUpdated(this.settings);
+class SettingsLoaded extends SettingsDataState {
+  SettingsLoaded(super.settings);
 }
 
-class SettingsError extends SettingsState {
-  final String message;
-  SettingsError(this.message);
+class SettingsUpdated extends SettingsDataState {
+  SettingsUpdated(super.settings);
 }

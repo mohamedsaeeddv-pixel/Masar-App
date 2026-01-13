@@ -1,27 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'dart:math' as math;
 
-// داخل widgets/order_status_card.dart
 class OrderStatusCard extends StatelessWidget {
   final double deliveredPercent;
   final double returnedPercent;
   final double failedPercent;
+  final double fontFactor; // تم الإضافة
+  final bool isDarkMode;   // تم الإضافة
 
   const OrderStatusCard({
     super.key,
     required this.deliveredPercent,
     required this.returnedPercent,
     required this.failedPercent,
+    required this.fontFactor,
+    required this.isDarkMode,
   });
 
   @override
   Widget build(BuildContext context) {
+    // تحديد ألوان الرسم البياني بناءً على الوضع
+    final Color deliveredColor = isDarkMode ? Colors.blueAccent : const Color(0xFF0D47A1);
+    final Color returnedColor = isDarkMode ? Colors.orangeAccent : Colors.orange;
+    final Color failedColor = isDarkMode ? Colors.redAccent : Colors.red;
+
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        // تغيير لون الكارت بناءً على الثيم
+        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDarkMode ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("حالة الطلبات", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            "dashboard.order_status".tr(), // ربط اللغة
+            style: TextStyle(
+              fontSize: 18 * fontFactor, // ربط الخط
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -35,6 +57,10 @@ class OrderStatusCard extends StatelessWidget {
                     delivered: deliveredPercent,
                     returned: returnedPercent,
                     failed: failedPercent,
+                    deliveredColor: deliveredColor,
+                    returnedColor: returnedColor,
+                    failedColor: failedColor,
+                    isDarkMode: isDarkMode,
                   ),
                 ),
               ),
@@ -42,9 +68,9 @@ class OrderStatusCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatusItem("تم التوصيل", deliveredPercent, const Color(0xFF0D47A1)),
-                  _buildStatusItem("راجع", returnedPercent, Colors.orange),
-                  _buildStatusItem("فشل", failedPercent, Colors.red),
+                  _buildStatusItem("dashboard.status_delivered".tr(), deliveredPercent, deliveredColor),
+                  _buildStatusItem("dashboard.status_returned".tr(), returnedPercent, returnedColor),
+                  _buildStatusItem("dashboard.status_failed".tr(), failedPercent, failedColor),
                 ],
               ),
             ],
@@ -55,57 +81,85 @@ class OrderStatusCard extends StatelessWidget {
   }
 
   Widget _buildStatusItem(String label, double value, Color color) {
-    return Row(
-      children: [
-        Icon(Icons.circle, size: 10, color: color),
-        const SizedBox(width: 8),
-        Text("$label: ", style: const TextStyle(color: Colors.grey, fontSize: 12)),
-        Text("${value.toInt()}%", style: const TextStyle(fontWeight: FontWeight.bold)),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(Icons.circle, size: 10, color: color),
+          const SizedBox(width: 8),
+          Text(
+              "$label: ",
+              style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : Colors.grey,
+                  fontSize: 12 * fontFactor
+              )
+          ),
+          Text(
+              "${value.toInt()}%",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontSize: 12 * fontFactor
+              )
+          ),
+        ],
+      ),
     );
   }
 }
 
 class MultiColorPieChartPainter extends CustomPainter {
   final double delivered, returned, failed;
-  MultiColorPieChartPainter({required this.delivered, required this.returned, required this.failed});
+  final Color deliveredColor, returnedColor, failedColor;
+  final bool isDarkMode;
+
+  MultiColorPieChartPainter({
+    required this.delivered,
+    required this.returned,
+    required this.failed,
+    required this.deliveredColor,
+    required this.returnedColor,
+    required this.failedColor,
+    required this.isDarkMode,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     double strokeWidth = 15;
     Rect rect = Offset.zero & size;
 
+    // 1. رسم الخلفية الدائرية (تتغير حسب المود)
     Paint backgroundPaint = Paint()
-      ..color = Colors.grey[300]!
+      ..color = isDarkMode ? Colors.grey[800]! : Colors.grey[200]!
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawArc(rect, 0, 6.28, false, backgroundPaint);
+    canvas.drawArc(rect, 0, 2 * math.pi, false, backgroundPaint);
 
-    // 2. رسم الأجزاء الملونة فوق الرصاصي
+    // 2. رسم الأجزاء الملونة
     Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    double startAngle = -1.57;
+    double startAngle = -math.pi / 2; // البداية من الأعلى
 
     if (delivered > 0) {
-      canvas.drawArc(rect, startAngle, (delivered / 100) * 6.28, false,
-          paint..color = const Color(0xFF0D47A1));
-      startAngle += (delivered / 100) * 6.28;
+      double sweepAngle = (delivered / 100) * 2 * math.pi;
+      canvas.drawArc(rect, startAngle, sweepAngle, false, paint..color = deliveredColor);
+      startAngle += sweepAngle;
     }
 
     if (returned > 0) {
-      canvas.drawArc(rect, startAngle, (returned / 100) * 6.28, false,
-          paint..color = Colors.orange);
-      startAngle += (returned / 100) * 6.28;
+      double sweepAngle = (returned / 100) * 2 * math.pi;
+      canvas.drawArc(rect, startAngle, sweepAngle, false, paint..color = returnedColor);
+      startAngle += sweepAngle;
     }
 
     if (failed > 0) {
-      canvas.drawArc(rect, startAngle, (failed / 100) * 6.28, false,
-          paint..color = Colors.red);
+      double sweepAngle = (failed / 100) * 2 * math.pi;
+      canvas.drawArc(rect, startAngle, sweepAngle, false, paint..color = failedColor);
     }
   }
 

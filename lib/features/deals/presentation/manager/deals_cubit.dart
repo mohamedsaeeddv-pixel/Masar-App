@@ -9,7 +9,9 @@ class DealsLoading extends DealsState {}
 class DealsSuccess extends DealsState {
   final List<DealModel> deals;
   final String activeFilter;
-  DealsSuccess(this.deals, {this.activeFilter = "الكل"});
+  final int timestamp;
+
+  DealsSuccess(this.deals, {this.activeFilter = "الكل", required this.timestamp});
 }
 class DealsError extends DealsState { final String message; DealsError(this.message); }
 
@@ -24,30 +26,25 @@ class DealsCubit extends Cubit<DealsState> {
   void getDeals() {
     emit(DealsLoading());
     _dealsSubscription?.cancel();
-
     _dealsSubscription = repo.fetchDeals().listen(
           (deals) {
         _allDeals = deals;
         _applyFilterAndEmit();
       },
-      onError: (e) {
-        emit(DealsError("خطأ في التحميل: ${e.toString()}"));
-      },
+      onError: (e) => emit(DealsError(e.toString())),
     );
   }
 
   void _applyFilterAndEmit() {
-    if (_currentFilter == "الكل") {
-      emit(DealsSuccess(_allDeals, activeFilter: "الكل"));
-      return;
-    }
+    final filtered = _currentFilter == "الكل"
+        ? _allDeals
+        : _allDeals.where((deal) => deal.status == _currentFilter).toList();
 
-    // التعديل هنا: بنقارن مباشرة بـ _currentFilter لأن الـ Repo بقا بيبعت "تمت" و "قيد الانتظار"
-    final filtered = _allDeals.where((deal) {
-      return deal.status == _currentFilter;
-    }).toList();
-
-    emit(DealsSuccess(filtered, activeFilter: _currentFilter));
+    emit(DealsSuccess(
+      filtered,
+      activeFilter: _currentFilter,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+    ));
   }
 
   void filterDeals(String status) {
@@ -56,17 +53,12 @@ class DealsCubit extends Cubit<DealsState> {
   }
 
   void searchDeals(String query) {
-    if (query.isEmpty) {
-      _applyFilterAndEmit();
-      return;
-    }
+    if (query.isEmpty) { _applyFilterAndEmit(); return; }
+    final filtered = _allDeals.where((deal) =>
+    deal.customerName.toLowerCase().contains(query.toLowerCase()) ||
+        deal.taskTitle.toLowerCase().contains(query.toLowerCase())).toList();
 
-    final filtered = _allDeals.where((deal) {
-      return deal.dealId.contains(query) ||
-          deal.customerName.toLowerCase().contains(query.toLowerCase());
-    }).toList();
-
-    emit(DealsSuccess(filtered, activeFilter: _currentFilter));
+    emit(DealsSuccess(filtered, activeFilter: _currentFilter, timestamp: DateTime.now().millisecondsSinceEpoch));
   }
 
   @override

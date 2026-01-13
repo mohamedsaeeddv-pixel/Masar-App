@@ -3,9 +3,10 @@ class DealModel {
   final String customerId;
   final String customerName;
   final String amount;
-  final String status; // 'تم التوصيل', 'قيد الانتظار', 'فشل'
+  final String status;
   final String location;
   final String phone;
+  final String taskTitle; // الحقل الجديد اللي هنعرضه كعنوان (استرجاع/استلام)
 
   DealModel({
     required this.dealId,
@@ -15,5 +16,6 @@ class DealModel {
     required this.status,
     required this.location,
     required this.phone,
+    required this.taskTitle, // إضافة للـ Constructor
   });
 }
