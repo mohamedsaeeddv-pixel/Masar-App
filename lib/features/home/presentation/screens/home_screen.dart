@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart'; // ضيف دي عشان نترجم الـ labels
 import 'package:masar_app/core/widgets/custom_chat_btn.dart';
 import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 import 'package:masar_app/routes/app_routes.dart';
@@ -9,17 +10,13 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../manager/home_cubit.dart';
 
-// 1. استيرادات ميزة إضافة عميل
+// الاستيرادات كما هي...
 import '../../../add_client/presentation/screens/add_client_screen.dart';
 import '../../../add_client/presentation/manager/add_client_cubit.dart';
 import '../../../add_client/data/repos/add_client_repo_impl.dart';
-
-// 2. استيرادات ميزة المهام اليومية (Daily Tasks)
 import '../../../daily_tasks/presentation/screens/daily_tasks_screen.dart';
 import '../../../daily_tasks/presentation/manager/tasks_cubit.dart';
 import '../../../daily_tasks/data/repos/daily_tasks_repo_impl.dart';
-
-// 3. استيراد ميزة الإعدادات (التعديل الجديد هنا) 👇
 import '../../../settings/presentation/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -45,46 +42,34 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // مصفوفة الصفحات المحدثة
   List<Widget> _getViews() => [
-    // Index 0: شاشة البروفايل
     const ProfileScreen(),
-
-    // Index 1: شاشة إضافة عميل
     BlocProvider(
       create: (context) => AddClientCubit(AddClientRepoImpl()),
       child: const AddClientScreen(),
     ),
-
-    // Index 2: شاشة المهام اليومية
     BlocProvider(
-  create: (context) {
-    final authState = context.read<AuthCubit>().state as AuthCubitAuthenticated;
-
-    return TasksCubit(
-      repository: TaskRepositoryImpl(
-        firestore: FirebaseFirestore.instance,
-      ),
-      agentId: authState.user.uid,
-    )..fetchCustomerTasks();
-  },
-  child: DailyTasksScreen(agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid),
-),
-
-
-    // Index 3: شاشة الإعدادات الحقيقية (تم التعديل هنا) 👇
+      create: (context) {
+        final authState = context.read<AuthCubit>().state as AuthCubitAuthenticated;
+        return TasksCubit(
+          repository: TaskRepositoryImpl(firestore: FirebaseFirestore.instance),
+          agentId: authState.user.uid,
+        )..fetchCustomerTasks();
+      },
+      child: DailyTasksScreen(agentId: (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid),
+    ),
     const SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final views = _getViews();
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return BlocConsumer<HomeCubit, HomeState>(
       listener: (context, state) {
         if (_pageController.hasClients) {
           int currentPage = _pageController.page?.round() ?? 0;
-
           if ((state.index - currentPage).abs() > 1) {
             _pageController.jumpToPage(state.index);
           } else {
@@ -98,17 +83,16 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       builder: (context, state) {
         return Scaffold(
+          // 2. تحديث خلفية الـ Scaffold
+          backgroundColor: isDarkMode ? const Color(0xFF121212) : AppColors.backgroundLight,
+
           floatingActionButton: CustomChatBtn(
             onPressed: () {
               context.pushNamed(
                 AppRoutes.chat,
                 extra: {
                   'chatId': 'chat_001',
-                  'currentUserId':
-                      (context.read<AuthCubit>().state
-                              as AuthCubitAuthenticated)
-                          .user
-                          .uid,
+                  'currentUserId': (context.read<AuthCubit>().state as AuthCubitAuthenticated).user.uid,
                 },
               );
             },
@@ -122,46 +106,59 @@ class _HomeScreenState extends State<HomeScreen> {
             children: views,
           ),
           bottomNavigationBar: Container(
+            // 1. إضافة Padding من الجوانب ومن تحت عشان ميبقاش لازق
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
+              // تحديث لون الـ Container الخارجي
+              color: isDarkMode ? const Color(0xFF1A1A1A) : AppColors.backgroundWhite,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
               ],
             ),
-            child: BottomNavigationBar(
-              currentIndex: state.index,
-              onTap: (index) {
-                context.read<HomeCubit>().changeIndex(index);
-              },
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: AppColors.backgroundWhite,
-              selectedItemColor: AppColors.bluePrimaryDark,
-              unselectedItemColor: Colors.grey,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  activeIcon: Icon(Icons.person),
-                  label: 'البروفايل',
+            child: SafeArea(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: BottomNavigationBar(
+                  currentIndex: state.index,
+                  onTap: (index) {
+                    context.read<HomeCubit>().changeIndex(index);
+                  },
+                  type: BottomNavigationBarType.fixed,
+                  elevation: 0, // بنصفرها لأن الـ Container هو اللي شايل الـ Shadow
+                  backgroundColor: Colors.transparent, // شفاف عشان ياخد لون الـ Container اللي وراه
+                  // 4. ألوان تنطق في الـ Dark Mode
+                  selectedItemColor: isDarkMode ? const Color(0xFF4FC3F7) : AppColors.bluePrimaryDark,
+                  unselectedItemColor: isDarkMode ? Colors.white38 : Colors.grey,
+                  selectedFontSize: 12,
+                  unselectedFontSize: 12,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.person_outline),
+                      activeIcon: const Icon(Icons.person),
+                      label: 'nav.profile'.tr(),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.person_add_alt_1_outlined),
+                      activeIcon: const Icon(Icons.person_add_alt_1),
+                      label: 'nav.add_client'.tr(),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.check_box_outlined),
+                      activeIcon: const Icon(Icons.check_box),
+                      label: 'nav.tasks'.tr(),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.settings_outlined),
+                      activeIcon: const Icon(Icons.settings),
+                      label: 'nav.settings'.tr(),
+                    ),
+                  ],
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_add_alt_1_outlined),
-                  activeIcon: Icon(Icons.person_add_alt_1),
-                  label: 'إضافة عميل',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.check_box_outlined),
-                  activeIcon: Icon(Icons.check_box),
-                  label: 'المهام اليومية',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings_outlined),
-                  activeIcon: Icon(Icons.settings),
-                  label: 'الإعدادات',
-                ),
-              ],
+              ),
             ),
           ),
         );

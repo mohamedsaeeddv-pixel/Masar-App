@@ -9,6 +9,10 @@ class AddClientRepoImpl implements AddClientRepo {
   Future<void> addClient(ClientModel client) async {
     final docRef = _firestore.collection('customers').doc();
 
-    await docRef.set(client.toMap());
+    final clientData = client.toMap();
+
+    clientData['timestamp'] = FieldValue.serverTimestamp();
+
+    await docRef.set(clientData);
   }
 }

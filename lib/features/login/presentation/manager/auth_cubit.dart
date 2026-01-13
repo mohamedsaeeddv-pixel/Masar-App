@@ -38,17 +38,21 @@ class AuthCubit extends Cubit<AuthCubitState> {
 
   /// Check if a user is already logged in
   Future<void> checkAuth() async {
-    emit(AuthCubitLoading());
-
+    // لا نرسل Loading هنا إذا كنا نريد استخدام الـ Splash اللي في الـ main
+    // ننتظر قليلاً أو نتأكد أن الـ Firebase جاهز
     final Either<Failure, bool> result = await authRepo.isLoggedIn();
 
     result.fold(
-      (failure) => emit(AuthCubitError(failure.errorMessage)),
-      (isLoggedIn) {
+          (failure) => emit(AuthCubitUnauthenticated()), // في حالة الفشل نعتبره غير مسجل
+          (isLoggedIn) {
         if (isLoggedIn) {
-          // Optional: you can fetch the UserModel from cache or Firebase here
-          emit(AuthCubitAuthenticated(
-              UserModel(uid: authRepo.currentUid()!, identifier: ''))); 
+          final uid = authRepo.currentUid();
+          if (uid != null) {
+            emit(AuthCubitAuthenticated(
+                UserModel(uid: uid, identifier: '')));
+          } else {
+            emit(AuthCubitUnauthenticated());
+          }
         } else {
           emit(AuthCubitUnauthenticated());
         }

@@ -1,40 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // للترجمة
 import 'custom_client_text_field.dart';
 
 class ClientNamesSection extends StatelessWidget {
   final TextEditingController nameArController;
   final TextEditingController nameEnController;
+  final double fontFactor; // استقبال معامل الخط
 
   const ClientNamesSection({
     super.key,
     required this.nameArController,
     required this.nameEnController,
+    this.fontFactor = 1.0, // افتراضي 1.0
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // حقل الاسم بالعربي
         CustomClientTextField(
-          label: "اسم العميل (بالعربي) *",
-          hint: "أدخل الاسم بالعربي",
+          label: "add_client.name_ar_label".tr(), // "اسم العميل (بالعربي) *"
+          hint: "add_client.name_ar_hint".tr(),   // "أدخل الاسم بالعربي"
           controller: nameArController,
+          fontFactor: fontFactor, // تمرير المعامل للـ Widget الصغير
           validator: (val) {
-            if (val == null || val.isEmpty) return "الاسم بالعربي مطلوب";
+            if (val == null || val.isEmpty) return "add_client.name_ar_required".tr();
             if (!RegExp(r'^[\u0600-\u06FF\s]+$').hasMatch(val)) {
-              return "يرجى إدخال حروف عربية فقط";
+              return "add_client.arabic_only_error".tr();
             }
             return null;
           },
         ),
+
+        // حقل الاسم بالإنجليزي
         CustomClientTextField(
-          label: "Client Name (English) *",
-          hint: "Enter English Name",
+          label: "add_client.name_en_label".tr(), // "Client Name (English) *"
+          hint: "add_client.name_en_hint".tr(),   // "Enter English Name"
           controller: nameEnController,
+          fontFactor: fontFactor,
           validator: (val) {
-            if (val == null || val.isEmpty) return "English name is required";
+            if (val == null || val.isEmpty) return "add_client.name_en_required".tr();
             if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(val)) {
-              return "Please enter English letters only";
+              return "add_client.english_only_error".tr();
             }
             return null;
           },

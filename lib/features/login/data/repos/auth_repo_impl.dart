@@ -37,7 +37,10 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Either<FirebaseAuthFailure, bool>> isLoggedIn() async {
     try {
-      return right(_auth.currentUser != null);
+      // ننتظر قليلاً للتأكد من أن Firebase استعاد الجلسة
+      // أو نعتمد على currentUser مباشرة ولكن بشرط التعامل معها في الـ Cubit
+      final user = _auth.currentUser;
+      return right(user != null);
     } catch (e) {
       return left(FirebaseAuthFailure(errorMessage: e.toString()));
     }
