@@ -35,7 +35,7 @@ class AreaDropdownField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: staticAreas.contains(selectedArea) ? selectedArea : null,
+          initialValue: staticAreas.contains(selectedArea) ? selectedArea : null,
           isExpanded: true, // مهم جداً عشان النص ما يخرجش بره
           hint: Text(
             "add_client.area_hint".tr(), // ترجمة: "اختر المنطقة"

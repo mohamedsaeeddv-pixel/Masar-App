@@ -154,5 +154,20 @@
     "app_name": "App Name",
     "description_title": "About App",
     "description_text": "Masar app is your smart companion for managing your trips and daily tasks with ease."
+  },
+   "daily_tasks": {
+    "title": "Daily Tasks",
+    "ready_nav": "Ready for Navigation",
+    "start_journey": "Start Today's Journey",
+    "waiting_clients": "clients waiting for you",
+    "start_navigation": "Start Navigation",
+    "no_tasks": "No tasks for today",
+    "task_id": "Task ID: {}",
+    "client": "Client: {}",
+    "amount": "Amount: {} {}",
+    "status_collect": "Collect Amount",
+    "status_return": "Return Products",
+    "pending_tasks": "Pending Tasks",
+    "client_name": "Client Name"
   }
 }

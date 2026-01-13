@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 import 'package:masar_app/features/daily_tasks/presentation/manager/tasks_state.dart';
 import '../manager/tasks_cubit.dart';
-import '../widgets/progress_card.dart';
 import '../widgets/navigation_card.dart';
 import '../widgets/task_item.dart';
 
@@ -14,12 +14,13 @@ class DailyTasksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF2F2F2),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0D47A1),
-        title: const Text(
-          'المهام اليومية',
+        title: Text(
+          'daily_tasks.title'.tr(),
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
@@ -45,11 +46,12 @@ class DailyTasksScreen extends StatelessWidget {
                         // ProgressCard(clientsLength: state.tasks.length),
                         const SizedBox(height: 16),
                         NavigationCard(
+                          isDarkMode: isDarkMode,
                           tasks: state.tasks.where((task) => task.status == TaskStatus.assigned).toList(),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
-                          'المهام المعلقة',
+                         Text(
+                          'daily_tasks.pending_tasks'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -57,7 +59,7 @@ class DailyTasksScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         state.tasks.isEmpty
-                            ? _buildEmptyState()
+                            ? _buildEmptyState(isDarkMode: isDarkMode)
                             : ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -65,7 +67,7 @@ class DailyTasksScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   if (state.tasks[index].status ==
                                       TaskStatus.assigned){
-                                    return TaskItem(task: state.tasks[index]);}
+                                    return TaskItem(isDarkMode: isDarkMode, task: state.tasks[index]);}
                                   return const SizedBox.shrink();
                                 },
                               ),
@@ -93,7 +95,7 @@ class DailyTasksScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState({ required bool isDarkMode}) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,14 +104,14 @@ class DailyTasksScreen extends StatelessWidget {
           Icon(
             Icons.assignment_turned_in_outlined,
             size: 80,
-            color: Colors.grey[300],
+            color: isDarkMode ? Colors.grey[700] : Colors.grey[300],
           ),
           const SizedBox(height: 16),
-          const Text(
-            "لا توجد مهام حالياً",
+           Text(
+            'daily_tasks.no_tasks'.tr(),
             style: TextStyle(
               fontSize: 18,
-              color: Colors.grey,
+              color: isDarkMode ? Colors.grey[700] : Colors.grey[300],
               fontWeight: FontWeight.bold,
             ),
           ),

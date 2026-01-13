@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:masar_app/features/add_client/presentation/screens/add_client_screen.dart';
 import 'package:masar_app/features/chat/presentation/screens/chat_screen.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
+import 'package:masar_app/features/home/presentation/manager/home_cubit.dart';
 import 'package:masar_app/features/home/presentation/screens/client_details_screen.dart';
 import 'package:masar_app/features/home/presentation/screens/map/map_screen.dart';
 import 'package:masar_app/features/login/presentation/screens/login_screen.dart';
@@ -20,16 +21,17 @@ import 'package:masar_app/features/add_client/presentation/manager/add_client_cu
 import 'package:masar_app/features/add_client/data/repos/add_client_repo_impl.dart';
 import 'package:masar_app/features/chat/presentation/manager/chat_cubit.dart';
 import 'package:masar_app/features/chat/data/repos/chats_repo_impel.dart';
-import 'package:masar_app/features/home/presentation/manager/home_cubit.dart';
 import 'package:masar_app/features/login/presentation/manager/auth_cubit.dart';
 
 import 'app_routes.dart';
 
 class AppRouter {
-  static final GlobalKey<NavigatorState> parentNavigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> parentNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   // 1. وسيط خارجي عشان نبلغ الراوتر بأي تغيير في حالة تسجيل الدخول
-  static final StreamController<void> authNotifier = StreamController<void>.broadcast();
+  static final StreamController<void> authNotifier =
+      StreamController<void>.broadcast();
 
   static final GoRouter router = GoRouter(
     navigatorKey: parentNavigatorKey,
@@ -73,11 +75,38 @@ class AppRouter {
       GoRoute(
         path: '/home',
         name: AppRoutes.home,
-        builder: (context, state) => BlocProvider(
-          create: (context) => HomeCubit(),
-          child: const HomeScreen(),
-        ),
+        builder: (context, state) =>
+            BlocProvider(create: (_) => HomeCubit(), child: const HomeScreen()),
+        routes: [
+          GoRoute(
+            path: 'client-details',
+            name: AppRoutes.clientDetails,
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              final clientId = extra['clientId'] as String;
+              extra['clientId'] as String;
+              final tasks = extra['tasks'] as List<TaskModel>;
+              final task = extra['task'] as TaskModel;
+              return ClientDetailsScreen(
+                clientId: clientId,
+                task: task,
+                tasks: tasks,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'map',
+            name: AppRoutes.map,
+            builder: (context, state) {
+              final tasks =
+                  (state.extra as Map<String, dynamic>)['tasks']
+                      as List<TaskModel>;
+              return MapScreen(tasks: tasks);
+            },
+          ),
+        ],
       ),
+
       GoRoute(
         path: '/profile',
         name: AppRoutes.profile,
@@ -108,28 +137,6 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/client-details',
-        name: AppRoutes.clientDetails,
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>;
-
-          return ClientDetailsScreen(
-            clientId: extra['clientId'] as String,
-            task: extra['task'] as TaskModel,
-            tasks: extra['tasks'] as List<TaskModel>,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/map',
-        name: AppRoutes.map,
-        builder: (context, state) {
-          final tasks =
-              (state.extra as Map<String, dynamic>)['tasks'] as List<TaskModel>;
-          return MapScreen(tasks: tasks);
-        },
-      ),
     ],
   );
 }
@@ -139,7 +146,7 @@ class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
-          (dynamic _) => notifyListeners(),
+      (dynamic _) => notifyListeners(),
     );
   }
   late final StreamSubscription<dynamic> _subscription;

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as mp;
-import 'package:easy_localization/easy_localization.dart'; // أضفنا المكتبة هنا
 
 class LocationService {
   static Future<Position?> getCurrentLocation() async {

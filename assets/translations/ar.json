@@ -159,5 +159,20 @@
     "app_name": "اسم التطبيق",
     "description_title": "عن التطبيق",
     "description_text": "تطبيق مسار هو رفيقك الذكي لإدارة رحلاتك ومهامك اليومية بكل سهولة."
+  },
+  "daily_tasks": {
+    "title": "المهام اليومية",
+    "ready_nav": "جاهز للملاحة",
+    "start_journey": "ابدأ رحلة اليوم",
+    "waiting_clients": " عملاء في انتظارك",
+    "start_navigation": "بدء الملاحة",
+    "no_tasks": "لا توجد مهام لليوم",
+    "task_id": "رقم المهمة: {}",
+    "client": "العميل: {}",
+    "amount": "المبلغ: {} جنيه",
+    "status_collect": "تحصيل المبلغ",
+    "status_return": "استرجاع المنتجات",
+    "pending_tasks": "المهام المعلقة",
+    "client_name": "اسم العميل"
   }
 }

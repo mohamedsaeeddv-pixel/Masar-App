@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
-
 import 'package:masar_app/features/home/presentation/screens/map/customer_map_services.dart';
-import 'package:masar_app/routes/app_routes.dart';
 
 class MapScreen extends StatefulWidget {
   final List<TaskModel> tasks;
@@ -176,90 +172,85 @@ class _MapScreenState extends State<MapScreen> {
       );
     }
 
-    return PopScope(
-      canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          context.pushNamed(AppRoutes.home);
-        },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('الملاحة'),
-          actions: [
-            if (isRouteLoading)
-              const Padding(
-                padding: EdgeInsets.all(12),
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
-          ],
-        ),
-      
-        floatingActionButton: FloatingActionButton(
-          heroTag: 'tracking_fab',
-          onPressed: myLocation == null
-              ? null
-              : isTracking
-              ? _stopTracking
-              : _startTracking,
-          backgroundColor: isTracking ? Colors.red : Colors.green,
-          child: Icon(isTracking ? Icons.stop : Icons.play_arrow),
-        ),
-      
-        body: FlutterMap(
-          options: MapOptions(
-            initialCenter:
-            myLocation ?? customerMarkers.first.point,
-            initialZoom: 15,
-          ),
-          children: [
-            // ===== MAP =====
-            TileLayer(
-              urlTemplate:
-              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('الملاحة'),
+        leading: null,
+        actions: [
+          if (isRouteLoading)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: CircularProgressIndicator(color: Colors.white),
             ),
-      
-            // ===== NAVIGATION ROUTE =====
-            if (navigationRoute.isNotEmpty)
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: navigationRoute,
-                    strokeWidth: 4,
-                    color: Colors.blue,
-                  ),
-                ],
-              ),
-      
-            // ===== TRACKING LINE =====
-            if (trackingPoints.length > 1)
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: trackingPoints,
-                    strokeWidth: 3,
-                    color: Colors.green,
-                  ),
-                ],
-              ),
-      
-            // ===== MARKERS =====
-            MarkerLayer(
-              markers: [
-                if (myLocation != null)
-                  Marker(
-                    width: 40,
-                    height: 40,
-                    point: myLocation!,
-                    child: const Icon(
-                      Icons.navigation,
-                      color: Colors.blue,
-                      size: 30,
-                    ),
-                  ),
-                ...customerMarkers,
+        ],
+      ),
+    
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'tracking_fab',
+        onPressed: myLocation == null
+            ? null
+            : isTracking
+            ? _stopTracking
+            : _startTracking,
+        backgroundColor: isTracking ? Colors.red : Colors.green,
+        child: Icon(isTracking ? Icons.stop : Icons.play_arrow),
+      ),
+    
+      body: FlutterMap(
+        options: MapOptions(
+          initialCenter:
+          myLocation ?? customerMarkers.first.point,
+          initialZoom: 15,
+        ),
+        children: [
+          // ===== MAP =====
+          TileLayer(
+            urlTemplate:
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          ),
+    
+          // ===== NAVIGATION ROUTE =====
+          if (navigationRoute.isNotEmpty)
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: navigationRoute,
+                  strokeWidth: 4,
+                  color: Colors.blue,
+                ),
               ],
             ),
-          ],
-        ),
+    
+          // ===== TRACKING LINE =====
+          if (trackingPoints.length > 1)
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: trackingPoints,
+                  strokeWidth: 3,
+                  color: Colors.green,
+                ),
+              ],
+            ),
+    
+          // ===== MARKERS =====
+          MarkerLayer(
+            markers: [
+              if (myLocation != null)
+                Marker(
+                  width: 40,
+                  height: 40,
+                  point: myLocation!,
+                  child: const Icon(
+                    Icons.navigation,
+                    color: Colors.blue,
+                    size: 30,
+                  ),
+                ),
+              ...customerMarkers,
+            ],
+          ),
+        ],
       ),
     );
   }

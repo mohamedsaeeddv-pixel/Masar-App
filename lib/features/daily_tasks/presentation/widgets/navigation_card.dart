@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
@@ -8,9 +9,10 @@ import '../../../../core/constants/app_colors.dart';
 class NavigationCard extends StatelessWidget {
     
      final List<TaskModel> tasks;
+     final bool isDarkMode;
 
 
-  const NavigationCard({super.key,  required this.tasks});
+  const NavigationCard({super.key,  required this.tasks, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +20,11 @@ class NavigationCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground, // استخدام مسمى الكروت من الـ Core
+        color: isDarkMode ? AppColors.inputBorder :  AppColors.cardBackground, // استخدام مسمى الكروت من الـ Core
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -39,8 +41,8 @@ class NavigationCard extends StatelessWidget {
                 color: AppColors.bluePrimaryDark, // اللون الأساسي الأزرق
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'جاهز للملاحة ●',
+              child:  Text(
+                'daily_tasks.ready_nav'.tr(),
                 style: TextStyle(
                   color: AppColors.textOnPrimary, // اللون الأبيض للنصوص فوق الأزرق
                   fontSize: 12,
@@ -58,19 +60,19 @@ class NavigationCard extends StatelessWidget {
           ),
 
           Text(
-            '${tasks.length} عملاء في انتظارك',
+            '${tasks.length} ${'daily_tasks.waiting_clients'.tr()}',
             style: const TextStyle(
               color: AppColors.textMutedGray, // النص الرمادي الباهت
               fontSize: 14,
             ),
           ),
 
-          const Text(
-            'ابدأ رحلة اليوم',
+          Text(
+            'daily_tasks.start_journey'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimaryDark, // النص الأساسي الغامق
+              color:isDarkMode ? AppColors.textOnPrimary : AppColors.textPrimaryDark, // النص الأساسي الغامق
             ),
           ),
 
@@ -87,7 +89,7 @@ class NavigationCard extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.near_me_outlined),
-            label: const Text('بدء الملاحة'),
+            label: Text('daily_tasks.start_navigation'.tr()),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.bluePrimaryDark, // اللون الأزرق للزر
               foregroundColor: AppColors.textOnPrimary, // اللون الأبيض للكتابة

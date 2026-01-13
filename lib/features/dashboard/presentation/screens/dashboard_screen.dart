@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart'; // للترجمة
 import 'package:masar_app/features/settings/presentation/manager/settings_cubit.dart';
 import 'package:masar_app/features/settings/presentation/manager/settings_state.dart';
-import '../../../../../core/constants/app_colors.dart';
 import '../manager/dashboard_cubit.dart';
 import '../manager/dashboard_state.dart';
 import '../widgets/summary_card.dart';

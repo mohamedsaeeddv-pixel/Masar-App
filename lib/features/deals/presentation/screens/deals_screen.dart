@@ -22,7 +22,6 @@ class DealsScreen extends StatelessWidget {
 
         // باليتة ألوان الدارك مود الجديدة
         final Color bgColor = isDarkMode ? const Color(0xFF0A0E14) : const Color(0xFFF8F9FA);
-        final Color cardColor = isDarkMode ? const Color(0xFF151B26) : Colors.white;
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -100,8 +99,8 @@ class DealsScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ActionChip(
-        backgroundColor: isDarkMode ? accent.withOpacity(0.1) : Colors.white,
-        side: BorderSide(color: isDarkMode ? accent.withOpacity(0.3) : Colors.transparent),
+        backgroundColor: isDarkMode ? accent.withValues(alpha:  0.1) : Colors.white,
+        side: BorderSide(color: isDarkMode ? accent.withValues(alpha: 0.3) : Colors.transparent),
         label: Text(key.tr(), style: TextStyle(fontSize: 12 * fontFactor, color: isDarkMode ? accent : Colors.black87, fontWeight: FontWeight.bold)),
         onPressed: () => context.read<DealsCubit>().filterDeals(value),
       ),

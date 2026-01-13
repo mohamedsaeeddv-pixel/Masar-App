@@ -73,7 +73,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
           if (settingsState.settings.fontSize == 'صغير') fontFactor = 0.8;
         }
 
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
 
         return Scaffold(
           // الخلفية بتتحدث أوتوماتيك من الثيم اللي في الـ main

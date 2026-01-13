@@ -19,13 +19,11 @@ import 'package:masar_app/features/reports/presentation/screens/reports_screen.d
 import '../widgets/info_tile.dart';
 import '../widgets/menu_item.dart';
 import '../widgets/profile_header.dart';
-import '../widgets/stats_card.dart';
 
 // --- Core ---
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_styles.dart';
 import '../../../../../routes/app_router.dart'; // مهم عشان الـ authNotifier
-import '../../../../../routes/app_routes.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

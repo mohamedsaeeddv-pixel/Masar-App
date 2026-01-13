@@ -141,93 +141,86 @@ class ReportsScreen extends StatelessWidget {
       ),
     );
   }
+  // Widget _buildContentBasedOnState(BuildContext context, ReportsState state, bool isDarkMode, double fontFactor) {
 
-  Widget _buildBody(BuildContext context, ReportsState state, bool isDarkMode, double fontFactor) {
-    if (state is ReportsLoading) {
-      return const Center(
-        key: ValueKey('loading_state'), // Key فريد للتحميل
-        child: CircularProgressIndicator(),
-      );
-    }
+  //   if (state is ReportsSuccess) {
+  //     final data = state.reportsModel;
+  //     return SingleChildScrollView(
+  //       key: ValueKey('success_${data.reportPeriod}'),
+  //       padding: const EdgeInsets.all(16),
+  //       child: Column(
+  //         children: [
+  //           Text(
+  //               'reports.welcome'.tr(args: [data.userName]),
+  //               style: TextStyle(
+  //                 fontSize: 16 * fontFactor,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: isDarkMode ? Colors.white : Colors.black,
+  //               )
+  //           ),
+  //           const SizedBox(height: 16),
+  //           PeriodSelector(
+  //             selectedPeriod: data.reportPeriod,
+  //             onSelect: (p) => context.read<ReportsCubit>().fetchReports(p),
+  //             fontFactor: fontFactor,
+  //             isDarkMode: isDarkMode,
+  //           ),
+  //           const SizedBox(height: 20),
 
-    if (state is ReportsSuccess) {
-      final data = state.reportsModel;
-      return SingleChildScrollView(
-        key: ValueKey('success_${data.reportPeriod}'),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(
-                'reports.welcome'.tr(args: [data.userName]),
-                style: TextStyle(
-                  fontSize: 16 * fontFactor,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                )
-            ),
-            const SizedBox(height: 16),
-            PeriodSelector(
-              selectedPeriod: data.reportPeriod,
-              onSelect: (p) => context.read<ReportsCubit>().fetchReports(p),
-              fontFactor: fontFactor,
-              isDarkMode: isDarkMode,
-            ),
-            const SizedBox(height: 20),
+  //           // باقي الـ Widgets (GoalProgressCard, CompletedOrdersCard, إلخ...)
+  //           GoalProgressCard(
+  //             completed: data.completedOrders,
+  //             total: data.totalOrdersGoal,
+  //             sales: data.salesAmount,
+  //             salesGoal: data.totalSalesGoal,
+  //             period: data.reportPeriod,
+  //             fontFactor: fontFactor,
+  //             isDarkMode: isDarkMode,
+  //           ),
+  //           const SizedBox(height: 20),
+  //           CompletedOrdersCard(
+  //             completed: data.completedOrders,
+  //             total: data.totalOrdersGoal,
+  //             fontFactor: fontFactor,
+  //             isDarkMode: isDarkMode,
+  //           ),
+  //           const SizedBox(height: 16),
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: StatSmallCard(
+  //                   title: 'reports.collected_amount'.tr(),
+  //                   value: '${data.salesAmount.toInt()} ${'reports.currency'.tr()}',
+  //                   percent: '10%+',
+  //                   icon: Icons.account_balance_wallet_outlined,
+  //                   fontFactor: fontFactor,
+  //                   isDarkMode: isDarkMode,
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 12),
+  //               Expanded(
+  //                 child: StatSmallCard(
+  //                   title: 'reports.distance'.tr(),
+  //                   value: '${data.distanceKm.toInt()} ${'reports.unit_km'.tr()}',
+  //                   percent: '5%+',
+  //                   icon: Icons.directions_car_filled_outlined,
+  //                   fontFactor: fontFactor,
+  //                   isDarkMode: isDarkMode,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
 
-            // باقي الـ Widgets (GoalProgressCard, CompletedOrdersCard, إلخ...)
-            GoalProgressCard(
-              completed: data.completedOrders,
-              total: data.totalOrdersGoal,
-              sales: data.salesAmount,
-              salesGoal: data.totalSalesGoal,
-              period: data.reportPeriod,
-              fontFactor: fontFactor,
-              isDarkMode: isDarkMode,
-            ),
-            const SizedBox(height: 20),
-            CompletedOrdersCard(
-              completed: data.completedOrders,
-              total: data.totalOrdersGoal,
-              fontFactor: fontFactor,
-              isDarkMode: isDarkMode,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: StatSmallCard(
-                    title: 'reports.collected_amount'.tr(),
-                    value: '${data.salesAmount.toInt()} ${'reports.currency'.tr()}',
-                    percent: '10%+',
-                    icon: Icons.account_balance_wallet_outlined,
-                    fontFactor: fontFactor,
-                    isDarkMode: isDarkMode,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StatSmallCard(
-                    title: 'reports.distance'.tr(),
-                    value: '${data.distanceKm.toInt()} ${'reports.unit_km'.tr()}',
-                    percent: '5%+',
-                    icon: Icons.directions_car_filled_outlined,
-                    fontFactor: fontFactor,
-                    isDarkMode: isDarkMode,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (state is ReportsFailure) {
-      return Center(
-        key: const ValueKey('failure_state'),
-        child: Text(state.errMessage.tr(), style: const TextStyle(color: Colors.red)),
-      );
-    }
-    return const SizedBox.shrink();
-  }
+  //   if (state is ReportsFailure) {
+  //     return Center(
+  //       key: const ValueKey('failure_state'),
+  //       child: Text(state.errMessage.tr(), style: const TextStyle(color: Colors.red)),
+  //     );
+  //   }
+  //   return const SizedBox.shrink();
+  // }
 }

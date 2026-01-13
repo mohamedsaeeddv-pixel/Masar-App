@@ -7,7 +7,6 @@ import '../../../../core/constants/app_styles.dart';
 import '../../data/models/settings_model.dart';
 import '../manager/settings_cubit.dart';
 import '../manager/settings_state.dart';
-import '../widgets/app_info_item.dart';
 import '../widgets/option_card.dart';
 import '../widgets/settings_section.dart';
 

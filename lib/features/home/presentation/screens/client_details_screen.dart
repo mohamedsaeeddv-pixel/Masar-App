@@ -325,7 +325,7 @@ class LocationCard extends StatelessWidget {
 
 /// Section with action buttons for order management
 /// Provides buttons for: return, delivery confirmation, cancellation, and new order
-class ActionButtonsSection extends StatefulWidget {
+class ActionButtonsSection extends StatelessWidget {
   const ActionButtonsSection({
     super.key,
     required this.task,
@@ -334,13 +334,6 @@ class ActionButtonsSection extends StatefulWidget {
 
   final TaskModel task;
   final List<TaskModel> tasks;
-
-  @override
-  State<ActionButtonsSection> createState() => _ActionButtonsSectionState();
-}
-
-class _ActionButtonsSectionState extends State<ActionButtonsSection> {
-  final Map<String, bool> _buttonDisabled = {};
 
   @override
   Widget build(BuildContext context) {
@@ -405,8 +398,8 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                                   .collection('new_order')
                                   .doc()
                                   .id,
-                              area: widget.task.area,
-                              client: widget.task.client,
+                              area: task.area,
+                              client: task.client,
                               products: products
                                   .map((p) => p.toTaskProduct())
                                   .toList(),
@@ -447,29 +440,22 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                 // زر الاستلام / التسليم
                 Expanded(
                   child: _actionBtn(
-                    isLoading:
-                        isLoading || (_buttonDisabled[widget.task.id] ?? false),
-                    text: widget.task.taskType.label == 'تحصيل'
+                    isLoading:isLoading ,
+                    text: task.taskType.label == 'تحصيل'
                         ? 'تم تسليم الطلب'
                         : 'تم استلام الطلب',
                     color: AppColors.green,
                     icon: Icons.check_circle,
                     onPressed: () {
-                  
-
-                      final updatedTask = widget.task.copyWith(
+                      final updatedTask = task.copyWith(
                         status: TaskStatus.completed,
                         updatedAt: DateTime.now(),
                       );
-
-                    
-
                       context.read<OrderCubit>().sendAction(
                         updatedTask,
                         TaskStatus.completed,
                       );
-                      // ارجع للـ home بعد التسليم
-                            context.goNamed(AppRoutes.home);
+                    
                     },
                   ),
                 ),
@@ -494,9 +480,10 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                           onConfirm: () {
                             Navigator.pop(context);
 
-                            final updatedTask = widget.task.copyWith(
+                            final updatedTask = task.copyWith(
                               status: TaskStatus.failed,
                               updatedAt: DateTime.now(),
+                              
                             );
                            
 
@@ -536,8 +523,8 @@ class _ActionButtonsSectionState extends State<ActionButtonsSection> {
                                   .collection('new_order')
                                   .doc()
                                   .id,
-                              area: widget.task.area,
-                              client: widget.task.client,
+                              area: task.area,
+                              client: task.client,
                               products: products
                                   .map((p) => p.toTaskProduct())
                                   .toList(),

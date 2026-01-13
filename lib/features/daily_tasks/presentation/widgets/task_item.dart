@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 // استيراد الـ Core
@@ -5,8 +6,9 @@ import '../../../../core/constants/app_colors.dart';
 
 class TaskItem extends StatelessWidget {
   final TaskModel task;
+  final bool isDarkMode;
   
-  const TaskItem({super.key, required this.task});
+  const TaskItem({super.key, required this.task, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class TaskItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground, // من الـ Core
+        color: isDarkMode ? AppColors.inputBorder : AppColors.cardBackground, // من الـ Core
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -37,9 +39,9 @@ class TaskItem extends StatelessWidget {
             children: [
               Text(
                   task.area.name,
-                  style: const TextStyle(
+                  style:  TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textMutedGray // من الـ Core
+                      color: isDarkMode ? AppColors.textOnPrimary : AppColors.textMutedGray // من الـ Core
                   )
               ),
               _buildBadge(task.taskType.label, statusColor),
@@ -47,11 +49,11 @@ class TaskItem extends StatelessWidget {
           ),
           const Divider(height: 30, color: AppColors.borderLight), // من الـ Core
           Text(
-              'العميل: ${task.client.name }',
-              style: const TextStyle(
+              '${'daily_tasks.client_name'.tr()}: ${task.client.name }',
+              style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: AppColors.textPrimaryDark // من الـ Core
+                  color: isDarkMode ? AppColors.textOnPrimary : AppColors.textPrimaryDark // من الـ Core
               )
           ),
           const SizedBox(height: 4),
@@ -67,17 +69,17 @@ class TaskItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                  '${task.totalPrice} ج.م',
-                  style: const TextStyle(
-                      color: AppColors.bluePrimaryDark, // من الـ Core
+                  '${task.totalPrice} ${'common.currency'.tr()}',
+                  style: TextStyle(
+                      color: isDarkMode ? AppColors.textOnPrimary : AppColors.bluePrimaryDark, // من الـ Core
                       fontWeight: FontWeight.bold,
                       fontSize: 18
                   )
               ),
               Text(
                   task.createdAt.toLocal().toString().split(' ')[0],
-                  style: const TextStyle(
-                      color: AppColors.textMutedGray, // من الـ Core
+                  style: TextStyle(
+                      color: isDarkMode ? AppColors.textOnPrimary : AppColors.textMutedGray, // من الـ Core
                       fontSize: 14
                   )
               ),

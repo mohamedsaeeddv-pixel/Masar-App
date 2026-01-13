@@ -43,7 +43,7 @@ class CustomDropdownField extends StatelessWidget {
 
         // الـ Dropdown مع تصميم مستجيب
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           // تحديد لون خلفية القائمة عند فتحها
           dropdownColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
           // أيقونة السهم بلون يتناسب مع المظهر

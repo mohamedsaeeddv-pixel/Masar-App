@@ -30,9 +30,17 @@ dependencies:
   flutter_phoenix: ^1.1.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: 'assets/images/logo.png'
+  # للأندرويد 12+ لو حابب تضيف خلفية بيضاء
+  adaptive_icon_background: "#FFFFFF"
 
 flutter:
   uses-material-design: true
@@ -50,20 +58,3 @@ flutter:
           weight: 600
         - asset: assets/fonts/Arial-Bold.ttf
           weight: 700
-
-# التعديل هنا لضبط الصورة ومنع التكرار البصري
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/images/logo.png
-
-  # الخصائص دي بتخلي اللوجو في النص بالضبط وبحجم ثابت
-  android_gravity: center
-  ios_content_mode: center
-
-  # إعدادات أندرويد 12+ (مهمة جداً لأنها نظام مختلف)
-  android_12:
-    color: "#FFFFFF"
-    image: assets/images/logo.png
-    icon_background_color: "#FFFFFF"
-
-  fullscreen: true
