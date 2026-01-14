@@ -11,6 +11,7 @@ import 'package:masar_app/core/constants/app_styles.dart';
 import 'package:masar_app/core/widgets/custom_app_bar.dart';
 import 'package:masar_app/core/utils/snack_bar_helper.dart';
 import 'package:masar_app/core/widgets/custom_dialog_for_confirm.dart';
+import 'package:masar_app/core/widgets/custom_dialog_for_loading.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_model.dart';
 import 'package:masar_app/features/daily_tasks/data/models/representative_models/task_type_model.dart';
 import 'package:masar_app/features/home/data/repos/client_details_repos/client_details_repo_impl.dart';
@@ -355,12 +356,18 @@ class ActionButtonsSection extends StatelessWidget {
           );
         }
 
-        if (state is OrderSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context, rootNavigator: true).pop();
-            SnackBarHelper.showSuccess(context, message: state.message);
-          });
-        }
+      if (state is OrderSuccess) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Navigator.of(context, rootNavigator: true).pop(); // close loading
+
+    SnackBarHelper.showSuccess(
+      context,
+      message: state.message,
+    );
+
+    context.goNamed(AppRoutes.home);
+  });
+}
 
         if (state is OrderFailure) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -441,12 +448,14 @@ class ActionButtonsSection extends StatelessWidget {
                 Expanded(
                   child: _actionBtn(
                     isLoading:isLoading ,
-                    text: task.taskType.label == 'تحصيل'
+                    text: task.taskType.label == 'توصيل'
                         ? 'تم تسليم الطلب'
                         : 'تم استلام الطلب',
                     color: AppColors.green,
                     icon: Icons.check_circle,
                     onPressed: () {
+                     
+                     
                       final updatedTask = task.copyWith(
                         status: TaskStatus.completed,
                         updatedAt: DateTime.now(),
@@ -454,7 +463,8 @@ class ActionButtonsSection extends StatelessWidget {
                       context.read<OrderCubit>().sendAction(
                         updatedTask,
                         TaskStatus.completed,
-                      );
+                      ); 
+                   
                     
                     },
                   ),
@@ -480,6 +490,8 @@ class ActionButtonsSection extends StatelessWidget {
                           onConfirm: () {
                             Navigator.pop(context);
 
+                      
+
                             final updatedTask = task.copyWith(
                               status: TaskStatus.failed,
                               updatedAt: DateTime.now(),
@@ -492,8 +504,8 @@ class ActionButtonsSection extends StatelessWidget {
                               TaskStatus.failed,
                             );
 
-                            // ارجع للـ home بعد الإلغاء
-                            context.goNamed(AppRoutes.home);
+                           
+                           
                           },
                         ),
                       );

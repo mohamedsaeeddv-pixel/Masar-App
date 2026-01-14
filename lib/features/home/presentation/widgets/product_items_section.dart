@@ -19,12 +19,12 @@ class ProductsSection extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: task.taskType.label == 'تحصيل'
+            color: task.taskType.label == 'توصيل'
                 ? AppColors.lightGreenBackground
                 : AppColors.lightOrangeBackground,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: task.taskType.label == 'تحصيل'
+              color: task.taskType.label == 'توصيل'
                   ? AppColors.green
                   : AppColors.textOrange,
             ),
@@ -36,7 +36,7 @@ class ProductsSection extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.info,
-                    color: task.taskType.label == 'تحصيل'
+                    color: task.taskType.label == 'توصيل'
                         ? AppColors.green
                         : AppColors.textOrange,
                     size: 20,
@@ -54,7 +54,7 @@ class ProductsSection extends StatelessWidget {
               Text(
                 task.taskType.label,
                 style: AppTextStyles.heading24Bold.copyWith(
-                  color: task.taskType.label == 'تحصيل'
+                  color: task.taskType.label == 'توصيل'
                       ? AppColors.green
                       : AppColors.textOrange,
                 ),
@@ -66,7 +66,7 @@ class ProductsSection extends StatelessWidget {
         Card(
           margin: const EdgeInsets.only(bottom: 12),
           color: AppColors.bluePrimaryLight,
-          shadowColor: task.taskType.label == "تحصيل"
+          shadowColor: task.taskType.label == "توصيل"
               ? AppColors.blueSecondaryLightForBorder
               : AppColors.textOrange,
           child: Padding(
@@ -77,17 +77,17 @@ class ProductsSection extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.shopping_cart_outlined,
-                      color: task.taskType.label == "تحصيل"
+                      color: task.taskType.label == "توصيل"
                           ? AppColors.backgroundLight
                           : AppColors.textOrange,
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      task.taskType.label == "تحصيل"
+                      task.taskType.label == "توصيل"
                           ? 'المنتجات المطلوبة'
                           : 'المنتجات  المطلوب استرجاعها',
                       style: AppTextStyles.body16Bold.copyWith(
-                        color: task.taskType.label == "تحصيل"
+                        color: task.taskType.label == "توصيل"
                             ? AppColors.bluePrimaryDark
                             : AppColors.textOrange,
                       ),
@@ -111,7 +111,7 @@ class ProductsSection extends StatelessWidget {
                   },
                 ),
                 Divider(
-                  color: task.taskType.label == "تحصيل"
+                  color: task.taskType.label == "توصيل"
                       ? AppColors.blueSecondaryLightForBorder
                       : AppColors.textOrange,
                 ),
@@ -121,7 +121,7 @@ class ProductsSection extends StatelessWidget {
                     Text(
                       'الإجمالي',
                       style: AppTextStyles.body16Bold.copyWith(
-                        color: task.taskType.label == "تحصيل"
+                        color: task.taskType.label == "توصيل"
                             ? AppColors.bluePrimaryDark
                             : AppColors.textOrange,
                       ),
@@ -129,7 +129,7 @@ class ProductsSection extends StatelessWidget {
                     Text(
                       '${task.totalPrice} جنيه',
                       style: AppTextStyles.body16Bold.copyWith(
-                        color: task.taskType.label == "تحصيل"
+                        color: task.taskType.label == "توصيل"
                             ? AppColors.bluePrimaryDark
                             : AppColors.textOrange,
                       ),
@@ -170,7 +170,7 @@ class ProductItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: status == "تحصيل"
+            color: status == "توصيل"
                 ? AppColors.blueSecondaryLightForBorder
                 : AppColors.textOrange,
           ),
@@ -198,7 +198,7 @@ class ProductItem extends StatelessWidget {
             Text(
               '$price جنيه',
               style: AppTextStyles.body14SemiBold.copyWith(
-                color: status == "تحصيل"
+                color: status == "توصيل"
                     ? AppColors.bluePrimaryDark
                     : AppColors.textOrange,
               ),

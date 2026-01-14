@@ -14,7 +14,7 @@ class SnackBarHelper {
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          duration: const Duration(milliseconds: 800),
+          duration: const Duration(milliseconds: 1000),
           content: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
